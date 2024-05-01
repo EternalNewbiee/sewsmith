@@ -4,45 +4,52 @@ import { CheckIcon } from '@heroicons/react/20/solid'
 
 const tiers = [
   {
-    name: 'Freelancer',
-    id: 'tier-freelancer',
+    name: 'Home Tailor',
+    id: 'tier-home-tailor',
     href: '#',
-    priceMonthly: '$24',
-    description: 'The essentials to provide your best work for clients.',
-    features: ['5 products', 'Up to 1,000 subscribers', 'Basic analytics', '48-hour support response time'],
+    priceMonthly: '$19',
+    description: 'Perfect for the individual tailor managing personal client requests from home.',
+    features: [
+      'Manage up to 50 client orders',
+      'Basic client management system',
+      'Basic analytics for order tracking',
+      'Email support with 72-hour response time',
+    ],
     mostPopular: false,
   },
   {
-    name: 'Startup',
-    id: 'tier-startup',
+    name: 'Local Boutique',
+    id: 'tier-local-boutique',
     href: '#',
-    priceMonthly: '$32',
-    description: 'A plan that scales with your rapidly growing business.',
+    priceMonthly: '$49',
+    description: 'Ideal for growing tailoring shops needing more robust client and order management.',
     features: [
-      '25 products',
-      'Up to 10,000 subscribers',
-      'Advanced analytics',
-      '24-hour support response time',
-      'Marketing automations',
+      'Manage up to 200 client orders',
+      'Enhanced client management system',
+      'Intermediate analytics with order and client insights',
+      'Email and phone support with 24-hour response time',
+      'SMS notifications for client updates',
     ],
     mostPopular: true,
   },
   {
-    name: 'Enterprise',
-    id: 'tier-enterprise',
+    name: 'Tailoring Chain',
+    id: 'tier-tailoring-chain',
     href: '#',
-    priceMonthly: '$48',
-    description: 'Dedicated support and infrastructure for your company.',
+    priceMonthly: '$99',
+    description: 'Comprehensive solutions for high-volume tailoring enterprises with multiple locations.',
     features: [
-      'Unlimited products',
-      'Unlimited subscribers',
-      'Advanced analytics',
-      '1-hour, dedicated support response time',
-      'Marketing automations',
+      'Manage unlimited client orders',
+      'Advanced client management platform',
+      'Detailed analytics dashboard with business insights',
+      'Priority support with 1-hour response time',
+      'Marketing automation tools',
+      'Multi-location management support',
     ],
     mostPopular: false,
   },
 ]
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -55,7 +62,7 @@ const PricingSection = () => {
         <div className="mx-auto max-w-4xl text-center">
             <h2 className="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
             <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Pricing plans for teams of&nbsp;all&nbsp;sizes
+            Pricing plans for businesses of&nbsp;all&nbsp;sizes
             </p>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">

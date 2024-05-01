@@ -1,5 +1,6 @@
 import StatisticSection from "@/components/app/Statistics";
 import { getUser } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const { user } = await getUser();
@@ -7,7 +8,7 @@ export default async function DashboardPage() {
   return (
     <>
       <StatisticSection />
-      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
+      
     </>
   );
 }

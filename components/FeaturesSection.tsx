@@ -1,70 +1,47 @@
 import React from 'react'
-import {
-  ArrowPathIcon,
-  Bars3Icon,
-  CloudArrowUpIcon,
-  FingerPrintIcon,
-  LockClosedIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline'
+import { Fragment } from 'react'
+import { Tab } from '@headlessui/react'
 
 const features = [
-  {
-    name: 'Push to deploy',
-    description:
-      'Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.',
-    icon: CloudArrowUpIcon,
-  },
-  {
-    name: 'SSL certificates',
-    description:
-      'Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.',
-    icon: LockClosedIcon,
-  },
-  {
-    name: 'Simple queues',
-    description:
-      'Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.',
-    icon: ArrowPathIcon,
-  },
-  {
-    name: 'Advanced security',
-    description:
-      'Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.',
-    icon: FingerPrintIcon,
-  },
+  { name: 'Origin', description: 'Designed by Good Goods, Inc.' },
+  { name: 'Material', description: 'Solid walnut base with rare earth magnets and polycarbonate add-ons.' },
+  { name: 'Dimensions', description: '15" x 3.75" x .75"' },
+  { name: 'Finish', description: 'Hand sanded and finished with natural oil' },
+  { name: 'Includes', description: 'Pen Tray, Phone Tray, Small Tray, Large Tray, Sticky Note Holder' },
+  { name: 'Considerations', description: 'Made from natural materials. Grain and color vary with each item.' },
 ]
 
 const FeaturesSection = () => {
   return (
-    <div className="mx-auto mt-32 max-w-7xl px-6 sm:mt-56 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-        <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2>
-        <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Everything you need to deploy your app
-        </p>
-        <p className="mt-6 text-lg leading-8 text-gray-600">
-            Quis tellus eget adipiscing convallis sit sit eget aliquet quis. Suspendisse eget egestas a elementum
-            pulvinar et feugiat blandit at. In mi viverra elit nunc.
-        </p>
-        </div>
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-        <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
-            {features.map((feature) => (
-            <div key={feature.name} className="relative pl-16">
-                <dt className="text-base font-semibold leading-7 text-gray-900">
-                <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
-                    <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
-                </div>
-                {feature.name}
-                </dt>
-                <dd className="mt-2 text-base leading-7 text-gray-600">{feature.description}</dd>
-            </div>
-            ))}
-        </dl>
-        </div>
+    <div className="bg-white">
+    <div aria-hidden="true" className="relative">
+      <img
+        src="https://tailwindui.com/img/ecommerce-images/product-feature-02-full-width.jpg"
+        alt=""
+        className="h-96 w-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-white" />
     </div>
+
+    <div className="relative mx-auto -mt-12 max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
+      <div className="mx-auto max-w-2xl text-center lg:max-w-4xl">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Product Specifications</h2>
+        <p className="mt-4 text-gray-500">
+          Organize is a system to keep your desk tidy and photo-worthy all day long. Procrastinate your work while you
+          meticulously arrange items into dedicated trays.
+        </p>
+      </div>
+
+      <dl className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:max-w-none lg:grid-cols-3 lg:gap-x-8">
+        {features.map((feature) => (
+          <div key={feature.name} className="border-t border-gray-200 pt-4">
+            <dt className="font-medium text-gray-900">{feature.name}</dt>
+            <dd className="mt-2 text-sm text-gray-500">{feature.description}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
   )
 }
-
 export default FeaturesSection
