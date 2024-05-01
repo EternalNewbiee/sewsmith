@@ -156,6 +156,7 @@ function Header({ user }: { user: User }) {
                       )}
                     </Menu.Item>
                 </div>
+
               </Menu.Items>
             </Transition>
           </Menu>
