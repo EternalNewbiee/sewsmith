@@ -23,7 +23,24 @@ export default function Home() {
 
       <main className="isolate">
         <Hero />
+
+        <LogoCloud />
+
+        {/* Feature section */}
+        <FeaturesSection />
+
+        {/* Testimonial section */}
+        <TestimonialSection />
+
+        {/* Pricing section */}
+        <PricingSection />
+
+        <FAQSection />
+
+        {/* CTA section */}
+        
       </main>
+
       {/* Footer */}
       <Footer />
     </div>
