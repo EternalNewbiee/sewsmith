@@ -105,18 +105,8 @@ export default function OrderPage() {
       <main className='mt-20'>
         <form onSubmit={handleSubmit} className='h-screen w-full'>
           <div className="flex flex-col bg-white h-full w-full p-4 justify-center">
-            {!fabricSelected && (
-              <div className="grid grid-cols-3 grid-rows-2 gap-4 h-full w-auto">
-                <FabricCard imageSrc="img/cotton.jpg" altText="cotton" title="PURE COTTON" price={5} onClick={() => handleFabricSelect('Cotton')} />
-                <FabricCard imageSrc="img/wool.jpg" altText="wool" title="PURE WOOL" price={4} onClick={() => handleFabricSelect('Wool')} />
-                <FabricCard imageSrc="img/silk.jpg" altText="silk" title="PURE SILK" price={6} onClick={() => handleFabricSelect('Silk')} />
-                <FabricCard imageSrc="img/satin.jpg" altText="satin" title="PURE SATIN" price={6} onClick={() => handleFabricSelect('Satin')} />
-                <FabricCard imageSrc="img/linen.jpg" altText="linen" title="PURE LINEN" price={6} onClick={() => handleFabricSelect('Linen')} />
-                <FabricCard imageSrc="img/polyester.jpg" altText="polyester" title="PURE POLYESTER" price={6} onClick={() => handleFabricSelect('Polyester')} />
-              </div>
-            )}
 
-            {fabricSelected && !clothesSelected &&  (
+          {!clothesSelected &&  (
               <div className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-auto">
                 <ProductCard imageSrc="/img/shirt.png" altText="cotton" title="SHIRT" price={3} isCustom={false} onClick={() => handleProductSelect('Shirt')} />
                 <ProductCard imageSrc="/img/polo shirt.png" altText="cotton" title="POLO SHIRT" price={4} isCustom={false} onClick={() => handleProductSelect('Polo Shirt')} />
@@ -134,7 +124,21 @@ export default function OrderPage() {
               </div>
             )}
 
-            {clothesSelected && (
+
+            { clothesSelected && !fabricSelected &&(
+              <div className="grid grid-cols-3 grid-rows-2 gap-4 h-full w-auto">
+                <FabricCard imageSrc="img/cotton.jpg" altText="cotton" title="PURE COTTON" price={5} onClick={() => handleFabricSelect('Cotton')} />
+                <FabricCard imageSrc="img/wool.jpg" altText="wool" title="PURE WOOL" price={4} onClick={() => handleFabricSelect('Wool')} />
+                <FabricCard imageSrc="img/silk.jpg" altText="silk" title="PURE SILK" price={6} onClick={() => handleFabricSelect('Silk')} />
+                <FabricCard imageSrc="img/satin.jpg" altText="satin" title="PURE SATIN" price={6} onClick={() => handleFabricSelect('Satin')} />
+                <FabricCard imageSrc="img/linen.jpg" altText="linen" title="PURE LINEN" price={6} onClick={() => handleFabricSelect('Linen')} />
+                <FabricCard imageSrc="img/polyester.jpg" altText="polyester" title="PURE POLYESTER" price={6} onClick={() => handleFabricSelect('Polyester')} />
+              </div>
+            )}
+
+
+
+            {fabricSelected && (
               <div className='bg-white h-full w-full flex gap-5 justify-around'>
                 <div className="flex flex-col w-[600px] h-full items-center gap-10">
                   <h2 className="text-xl font-semibold">Selected Fabric and Clothing Item</h2>
