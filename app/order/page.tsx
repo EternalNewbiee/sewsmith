@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import FabricCard from '@/components/app/FabricCard';
 import ProductCard from '@/components/app/ProductCard';
 import CustomDesign from '@/components/app/CustomDesign';
+import UserHeader from '@/components/UserHeader';
+import Footer from '@/components/Footer';
 
 const supabaseUrl = 'https://aasjrchinevrqjlqldvr.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhc2pyY2hpbmV2cnFqbHFsZHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MjI0NjEsImV4cCI6MjAyNzI5ODQ2MX0.pa32Bwe9UvDxTkhXdP7swUvRuFUJp7He5f54w5pbj80';
@@ -98,8 +100,9 @@ export default function OrderPage() {
   
   
   return (
-    <div className='bg-white min-h-screen min-w-screen flex items-center justify-center'>
-      <main className=''>
+    <div className='bg-white h-auto w-screen flex items-center justify-center'>
+      <UserHeader></UserHeader>
+      <main className='mt-20'>
         <form onSubmit={handleSubmit} className='h-screen w-full'>
           <div className="flex flex-col bg-white h-full w-full p-4 justify-center">
             {!fabricSelected && (
@@ -210,6 +213,8 @@ export default function OrderPage() {
             )}
           </div>
         </form>
+      <Footer></Footer>
+
       </main>
     </div>
   );
