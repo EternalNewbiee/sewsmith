@@ -166,5 +166,5 @@ export async function resetPassword(formData: FormData) {
     );
   }
 
-  return redirect("/dashboard?success=Password reset successfully.");
+  return redirect("/homepage?success=Password reset successfully.");
 }

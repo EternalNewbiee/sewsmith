@@ -6,12 +6,20 @@ import ProductCard from '@/components/app/ProductCard';
 import CustomDesign from '@/components/app/CustomDesign';
 import UserHeader from '@/components/UserHeader';
 import Footer from '@/components/Footer';
+import { redirect } from "next/navigation";
+import { getUser } from "@/lib/supabase/server";
+import { UserProvider } from "@/context/UserContext";
+
 
 const supabaseUrl = 'https://aasjrchinevrqjlqldvr.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhc2pyY2hpbmV2cnFqbHFsZHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MjI0NjEsImV4cCI6MjAyNzI5ODQ2MX0.pa32Bwe9UvDxTkhXdP7swUvRuFUJp7He5f54w5pbj80';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+
+
 export default function OrderPage() {
+
+  
   const [fabric, setFabric] = useState('');
   const [shirtType, setShirtType] = useState('');
   const [designFile, setDesignFile] = useState<File | null>(null);
@@ -101,7 +109,7 @@ export default function OrderPage() {
   
   return (
     <div className='bg-white h-auto w-screen flex items-center justify-center'>
-      <UserHeader></UserHeader>
+      {/* <UserHeader user={user} /> */}
       <main className='mt-20'>
         <form onSubmit={handleSubmit} className='h-screen w-full'>
           <div className="flex flex-col bg-white h-full w-full p-4 justify-center">
