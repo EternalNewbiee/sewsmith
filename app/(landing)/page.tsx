@@ -10,6 +10,7 @@ import PricingSection from '@/components/PricingSection'
 import FAQSection from '@/components/FAQSection'
 import Footer from '@/components/Footer'
 import LandingHeader from '@/components/LandingHeader'
+import LandingHero from '@/components/LandingHero'
 
 
 
@@ -22,7 +23,8 @@ export default function Home() {
       <LandingHeader />
 
       <main className="isolate">
-        <Hero />
+
+        <LandingHero />
 
         {/* Feature section */}
         <FeaturesSection />
@@ -30,7 +32,7 @@ export default function Home() {
         {/* Pricing section */}
         <PricingSection />
 
-        {/* CTA section */}
+
         
       </main>
 
