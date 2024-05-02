@@ -1,57 +1,55 @@
-import React from 'react'
-import { CheckIcon } from '@heroicons/react/20/solid'
-
+import React from 'react';
+import { CheckIcon } from '@heroicons/react/20/solid';
 
 const tiers = [
   {
-    name: 'Home Tailor',
-    id: 'tier-home-tailor',
+    name: 'Individual Tailor',
+    id: 'tier-individual-tailor',
     href: '#',
     priceMonthly: '$19',
-    description: 'Perfect for the individual tailor managing personal client requests from home.',
+    description: 'Perfect for individual tailors or small workshops focused on custom-tailored shirts.',
     features: [
-      'Manage up to 50 client orders',
-      'Basic client management system',
-      'Basic analytics for order tracking',
+      'Manage up to 50 custom orders',
+      'Client measurement and preference tracking',
+      'Basic analytics for order fulfillment',
       'Email support with 72-hour response time',
     ],
     mostPopular: false,
   },
   {
-    name: 'Local Boutique',
-    id: 'tier-local-boutique',
+    name: 'Tailoring Studio',
+    id: 'tier-tailoring-studio',
     href: '#',
     priceMonthly: '$49',
-    description: 'Ideal for growing tailoring shops needing more robust client and order management.',
+    description: 'Ideal for established studios that require advanced order and client management.',
     features: [
-      'Manage up to 200 client orders',
+      'Manage up to 200 custom orders',
       'Enhanced client management system',
-      'Intermediate analytics with order and client insights',
+      'Advanced fabric and style customization options',
       'Email and phone support with 24-hour response time',
       'SMS notifications for client updates',
     ],
     mostPopular: true,
   },
   {
-    name: 'Tailoring Chain',
-    id: 'tier-tailoring-chain',
+    name: 'Tailoring Enterprise',
+    id: 'tier-tailoring-enterprise',
     href: '#',
     priceMonthly: '$99',
-    description: 'Comprehensive solutions for high-volume tailoring enterprises with multiple locations.',
+    description: 'Comprehensive solution for large-scale operations with multiple tailors and high volume orders.',
     features: [
-      'Manage unlimited client orders',
+      'Unlimited custom orders management',
       'Advanced client management platform',
-      'Detailed analytics dashboard with business insights',
+      'Real-time analytics dashboard for business insights',
       'Priority support with 1-hour response time',
-      'Marketing automation tools',
+      'Automated client follow-ups and marketing tools',
       'Multi-location management support',
     ],
     mostPopular: false,
   },
-]
+];
 
-
-function classNames(...classes: string[]) {
+function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -62,12 +60,11 @@ const PricingSection = () => {
         <div className="mx-auto max-w-4xl text-center">
             <h2 className="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
             <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Pricing plans for businesses of&nbsp;all&nbsp;sizes
+            Tailored plans for every size of tailoring business
             </p>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
-            Distinctio et nulla eum soluta et neque labore quibusdam. Saepe et quasi iusto modi velit ut non voluptas
-            in. Explicabo id ut laborum.
+            Whether you're starting out or managing a large tailor shop, our plans scale with your needs.
         </p>
         <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
             {tiers.map((tier, tierIdx) => (
@@ -121,7 +118,7 @@ const PricingSection = () => {
                     'mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
                 )}
                 >
-                Buy plan
+                Subscribe
                 </a>
             </div>
             ))}
@@ -131,4 +128,4 @@ const PricingSection = () => {
   )
 }
 
-export default PricingSection
+export default PricingSection;
