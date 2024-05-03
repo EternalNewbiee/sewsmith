@@ -19,7 +19,7 @@ import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid"
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
   { name: "Employee", href: "/dashboard/users", icon: UsersIcon, current: false },
-  { name: "Orders", href: "/order", icon: FolderIcon, current: false },
+  { name: "Orders", href: "/order_history", icon: FolderIcon, current: false },
   { name: "Inventory", href: "#", icon: CalendarIcon, current: false },
 ];
 const teams = [
