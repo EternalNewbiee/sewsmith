@@ -1,14 +1,14 @@
 import StatisticSection from "@/components/app/Statistics";
+import OrderTable from "@/components/app/OrderTable";
 import { getUser } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
+export default async function OrdersPage() {
   const { user } = await getUser();
 
   return (
     <>
-      <StatisticSection />
-      
+      <OrderTable />
+      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
     </>
   );
 }

@@ -41,17 +41,6 @@ const LogoCloud = () => {
               height={48}
             />
           </div>
-          <div className="mt-16 flex justify-center">
-            <p className="relative rounded-full px-4 py-1.5 text-sm leading-6 text-gray-600 ring-1 ring-inset ring-gray-900/10 hover:ring-gray-900/20">
-              <span className="hidden md:inline">
-                Transistor saves up to $40,000 per year, per employee by working with us.
-              </span>
-              <a href="#" className="font-semibold text-indigo-600">
-                <span className="absolute inset-0" aria-hidden="true" /> Read our case study{' '}
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-            </p>
-          </div>
         </div>
     </div>
   )

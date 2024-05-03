@@ -15,7 +15,13 @@ export default async function DashboardLayout({
   if (!user) {
     return redirect("/signin");
   }
-
+  if(user?.role != "admin") {
+    return redirect ("homepage")
+  }
+  // if(user?.role != "admin"){
+  //   return redirect("/tasks")
+  // }
+  
   return (
     <UserProvider>
       <div>
