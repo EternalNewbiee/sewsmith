@@ -82,7 +82,7 @@ export default function OrderPage({ user }: { user: any }) {
           shirt_type: shirtType,
           design_file: designFile,
           color,
-          sizes: [sizes],
+          sizes: sizes,
           quantities: quantities,
           order_date: new Date().toISOString(),
           shipping_address: shippingAddress,
