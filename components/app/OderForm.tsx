@@ -1,22 +1,16 @@
+'use client'
+import React, { useState, useRef, useEffect } from 'react';
+import { getUser } from "@/lib/supabase/client";
+import { createClient } from '@/lib/supabase/client';
 
-import React, { useState, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import FabricCard from '@/components/app/FabricCard';
 import ProductCard from '@/components/app/ProductCard';
 import CustomDesign from '@/components/app/CustomDesign';
 import UserHeader from '@/components/UserHeader';
 import Footer from '@/components/Footer';
-import { User } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://aasjrchinevrqjlqldvr.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhc2pyY2hpbmV2cnFqbHFsZHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MjI0NjEsImV4cCI6MjAyNzI5ODQ2MX0.pa32Bwe9UvDxTkhXdP7swUvRuFUJp7He5f54w5pbj80';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-interface OrderFormProps {
-  user: User | null;
-}
-
-export default function OrderPage({ user }: OrderFormProps) {
+export default function OrderPage({ user }: { user: any }) {
   const [fabric, setFabric] = useState('');
   const [shirtType, setShirtType] = useState('');
   const [designFile, setDesignFile] = useState<File | null>(null);
@@ -29,7 +23,8 @@ export default function OrderPage({ user }: OrderFormProps) {
   const sizesRef = useRef<HTMLDivElement>(null);
   const [redirected, setRedirected] = useState(false);
   const [clickedInsideDetails, setClickedInsideDetails] = useState(false);
-
+  const supabase = createClient();
+  
   const handleFabricSelect = (fabricType: string) => {
     setFabric(fabricType);
     setFabricSelected(true);
@@ -60,6 +55,15 @@ export default function OrderPage({ user }: OrderFormProps) {
   const onRedirect = () => {
     console.log("Redirecting...");
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userData = await getUser();
+      const user = userData.user;
+      // Do something with user data
+    };
+    fetchData();
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

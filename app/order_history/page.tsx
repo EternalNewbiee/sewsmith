@@ -1,10 +1,8 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://aasjrchinevrqjlqldvr.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhc2pyY2hpbmV2cnFqbHFsZHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MjI0NjEsImV4cCI6MjAyNzI5ODQ2MX0.pa32Bwe9UvDxTkhXdP7swUvRuFUJp7He5f54w5pbj80';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import React, { useEffect, useState } from 'react';
+import { getUser } from "@/lib/supabase/client";
+import { createClient } from '@/lib/supabase/client';
 
 interface Order {
   id: number;
@@ -23,21 +21,33 @@ interface Order {
 
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const supabase = createClient();
+  const user = getUser();
 
   useEffect(() => {
     async function fetchOrders() {
-      const { data, error } = await supabase.from('orders').select('*');
+      const currentUser = await supabase.auth.getUser();
+      if (!currentUser) return;
+ 
+  
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', currentUser?.data?.user?.id);
+  
       if (error) {
         console.error('Error fetching orders:', error.message);
         return;
       }
+  
       if (data) {
         setOrders(data);
       }
     }
-
+  
     fetchOrders();
   }, []);
+  
 
   const cancelOrder = async (id: number) => {
     const confirmed = window.confirm('Are you sure you want to cancel this order?');
@@ -50,6 +60,10 @@ export default function OrderHistoryPage() {
       setOrders(orders.filter(order => order.id !== id));
     }
   };
+
+  if (!user) {
+    return <div>Please log in to view your order history.</div>;
+  }
 
   return (
     <div className="bg-gray-50">
@@ -81,7 +95,7 @@ export default function OrderHistoryPage() {
                         <a href='#'>Order#{order.id}</a>
                       </h3>
                       <p className="mt-2 text-sm font-medium text-gray-900">$ {order.total_price}</p>
-                      <p className="mt-3 text-sm text-gray-500">{order.shirt_type} with the fabric of {order.fabric}  </p>
+                      <p className="mt-3 text-sm text-gray-500">{order.shirt_type} with the fabric of {order.fabric}</p>
                     </div>
                   </div>
 
@@ -97,7 +111,6 @@ export default function OrderHistoryPage() {
                         <dt className="font-medium text-gray-900">Shipping Fee</dt>
                         <dd className="mt-3 space-y-3 text-gray-500">
                           <p>{order.shipping_fee}</p>
-                         
                         </dd>
                       </div>
                     </dl>
@@ -111,7 +124,7 @@ export default function OrderHistoryPage() {
                        on <time dateTime={order.order_date}>{order.order_date}</time>
                     </p>
                   </div>
-                  <button onClick={() => cancelOrder(order.id)} className="text-red-500 font-semibold  justify-end">Cancel Order</button>
+                  <button onClick={() => cancelOrder(order.id)} className="text-red-500 font-semibold justify-end">Cancel Order</button>
                 </div>
               </div>
             ))}
@@ -121,5 +134,3 @@ export default function OrderHistoryPage() {
     </div>
   );
 }
-
-

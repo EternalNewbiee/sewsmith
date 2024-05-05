@@ -72,3 +72,24 @@ export async function sendPasswordRecovery(email: string) {
 
   return;
 }
+
+export async function getOrders() {
+  const supabase = createClient();
+  const currentUser = await supabase.auth.getUser();
+  if (!currentUser) {
+    console.error('User not found');
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', currentUser);
+
+  if (error) {
+    console.error('Error fetching orders:', error.message);
+    return null;
+  }
+
+  return data;
+}
