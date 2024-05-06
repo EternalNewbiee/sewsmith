@@ -9,6 +9,7 @@ interface Order {
     shirt_type: string;
     sizes: string;
     quantities: number;
+    status: string;
 }
 
 export default function OrderHistory() {
@@ -29,11 +30,9 @@ export default function OrderHistory() {
     const handleCancelOrder = async (orderId: string) => {
         if (window.confirm('Are you sure you want to cancel this order?')) {
             const canceledOrder = await cancelOrder(orderId);
-            // Optionally, update the UI or show a message
             console.log("Order canceled:", canceledOrder);
         }
         const canceledOrder = await cancelOrder(orderId);
-        // Optionally, update the UI or show a message
         console.log("Order canceled:", canceledOrder);
     }
 
@@ -93,6 +92,12 @@ export default function OrderHistory() {
                                         >
                                             Quantity
                                         </th>
+                                        <th
+                                            scope="col"
+                                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                        >
+                                            Status
+                                        </th>
                                         <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                             <span className="sr-only">Edit</span>
                                         </th>
@@ -115,6 +120,9 @@ export default function OrderHistory() {
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 {order.quantities}
+                                            </td>
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                {order.status}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 <button

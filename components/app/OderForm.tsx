@@ -9,13 +9,12 @@ import CustomDesign from '@/components/app/CustomDesign';
 import UserHeader from '@/components/UserHeader';
 import Footer from '@/components/Footer';
 
-
 export default function OrderPage({ user }: { user: any }) {
   const [fabric, setFabric] = useState('');
   const [shirtType, setShirtType] = useState('');
   const [designFile, setDesignFile] = useState<File | null>(null);
   const [color, setColor] = useState('');
-  const [sizes, setSizes] = useState('');
+  const [sizes, setSizes] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<{ [size: string]: number }>({});
   const [fabricSelected, setFabricSelected] = useState(false);
   const [clothesSelected, setClothesSelected] = useState(false);
@@ -31,7 +30,12 @@ export default function OrderPage({ user }: { user: any }) {
   };
 
   const handleSizeChange = (size: string) => {
-    setSizes(size);
+    if (sizes.includes(size)) {
+      setSizes(sizes.filter((s) => s !== size));
+      setQuantities({ ...quantities, [size]: 0 });
+    } else {
+      setSizes([...sizes, size]);
+    }
   };
 
   const handleUploadComplete = () => {
@@ -71,41 +75,46 @@ export default function OrderPage({ user }: { user: any }) {
       if (!user) {
         throw new Error('User not authenticated');
       }
-  
+
       const shippingAddress = (document.getElementById('address') as HTMLInputElement).value;
-      const shippingFee = 150; // Assuming a fixed shipping fee for now
+      const shippingFee = 150; 
       const totalPrice = 250;
-  
-      const { data, error } = await supabase.from('orders').insert([
-        {
-          fabric,
-          shirt_type: shirtType,
-          design_file: designFile,
-          color,
-          sizes: sizes,
-          quantities: quantities,
-          order_date: new Date().toISOString(),
-          shipping_address: shippingAddress,
-          shipping_fee: shippingFee, // Changed to a number
-          total_price: totalPrice,
-          user_id: user.id,
-        },
-      ]);
-  
-      if (error) {
-        throw error;
+      const status = 'pending';
+
+      for (const size of sizes) {
+        const { data, error } = await supabase.from('orders').insert([
+          {
+            fabric,
+            shirt_type: shirtType,
+            design_file: designFile,
+            color,
+            sizes: size,
+            quantities: quantities[size] || 0,
+            order_date: new Date().toISOString(),
+            shipping_address: shippingAddress,
+            shipping_fee: shippingFee, // Changed to a number
+            total_price: totalPrice,
+            user_id: user.id,
+            status: status,
+          },
+        ]);
+
+        if (error) {
+          throw error;
+        }
+
+        console.log(`Order for ${size} inserted successfully:`, data);
       }
-  
-      console.log('Order inserted successfully:', data);
+
       setFabric('');
       setShirtType('');
       setDesignFile(null);
       setColor('');
-      setSizes('');
+      setSizes([]);
       setQuantities({});
       setFabricSelected(false);
       setClothesSelected(false);
-  
+
       if (sizesRef.current) {
         sizesRef.current.scrollIntoView({ behavior: 'smooth' });
       }
@@ -113,9 +122,7 @@ export default function OrderPage({ user }: { user: any }) {
       console.error('Error inserting order:', error instanceof Error ? error.message : 'Unknown error');
     }
   };
-  
-  
-  
+
   return (
     <div className='bg-white h-auto w-screen flex items-center justify-center'>
       <UserHeader></UserHeader>
@@ -123,7 +130,7 @@ export default function OrderPage({ user }: { user: any }) {
         <form onSubmit={handleSubmit} className='h-screen w-full'>
           <div className="flex flex-col bg-white h-full w-full p-4 justify-center">
 
-          {!clothesSelected &&  (
+            {!clothesSelected && (
               <div className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-auto">
                 <ProductCard imageSrc="/img/shirt.png" altText="cotton" title="SHIRT" price={3} isCustom={false} onClick={() => handleProductSelect('Shirt')} />
                 <ProductCard imageSrc="/img/polo shirt.png" altText="cotton" title="POLO SHIRT" price={4} isCustom={false} onClick={() => handleProductSelect('Polo Shirt')} />
@@ -136,13 +143,12 @@ export default function OrderPage({ user }: { user: any }) {
                   onFileUpload={handleFileUpload}
                   onUploadComplete={handleUploadComplete}
                   onRedirect={handleRedirect}
-                  uploadComplete={uploadComplete} 
-                  />
+                  uploadComplete={uploadComplete}
+                />
               </div>
             )}
 
-
-            { clothesSelected && !fabricSelected &&(
+            {clothesSelected && !fabricSelected && (
               <div className="grid grid-cols-3 grid-rows-2 gap-4 h-full w-auto">
                 <FabricCard imageSrc="img/cotton.jpg" altText="cotton" title="PURE COTTON" price={5} onClick={() => handleFabricSelect('Cotton')} />
                 <FabricCard imageSrc="img/wool.jpg" altText="wool" title="PURE WOOL" price={4} onClick={() => handleFabricSelect('Wool')} />
@@ -153,90 +159,79 @@ export default function OrderPage({ user }: { user: any }) {
               </div>
             )}
 
-
-
             {fabricSelected && (
               <div className='bg-white h-full w-full flex gap-5 justify-around'>
                 <div className="flex flex-col w-[600px] h-full items-center gap-10">
                   <h2 className="text-xl font-semibold">Selected Fabric and Clothing Item</h2>
+                  <div className='product-card cursor bg-gray-200 h-[190px] w-[190px] border rounded-lg cursor-pointer border-gray-400 relative'>
+                    <img src={`/img/${fabric.toLowerCase()}.jpg`} alt={fabric} className="h-full w-full object-cover" />
+                    <p className='text-center'>{fabric}</p>
+                  </div>
+                  <div className='product-card cursor bg-gray-200 h-[190px] w-[190px] border rounded-lg cursor-pointer border-gray-400 relative'>
+                    <img src={`/img/${shirtType.toLowerCase().replace(/ /g, '-')}.png`} alt={shirtType} className="h-full w-full object-cover" />
+                    <p className='text-center'>{shirtType}</p>
+                  </div>
+                  {designFile && (
                     <div className='product-card cursor bg-gray-200 h-[190px] w-[190px] border rounded-lg cursor-pointer border-gray-400 relative'>
-                      <img src={`/img/${fabric.toLowerCase()}.jpg`} alt={fabric} className="h-full w-full object-cover" />
-                      <p className='text-center'>{fabric}</p>
+                      <img src={URL.createObjectURL(designFile)} alt="Custom Design" className="h-full w-full object-cover" />
+                      <p className='text-center'>Custom Design</p>
                     </div>
-                    <div className='product-card cursor bg-gray-200 h-[190px] w-[190px] border rounded-lg cursor-pointer border-gray-400 relative'>
-                      <img src={`/img/${shirtType.toLowerCase().replace(/ /g, '-')}.png`} alt={shirtType} className="h-full w-full object-cover" />
-                      <p className='text-center'>{shirtType}</p>
-                    </div>
-                    {designFile && (
-                      <div className='product-card cursor bg-gray-200 h-[190px] w-[190px] border rounded-lg cursor-pointer border-gray-400 relative'>
-                        <img src={URL.createObjectURL(designFile)} alt="Custom Design" className="h-full w-full object-cover" />
-                        <p className='text-center'>Custom Design</p>
+                  )}
+                </div>
+                <div className="flex flex-col w-[500px] h-full" ref={sizesRef}>
+                  <h2 className="text-xl font-semibold">Sizes and Quantities</h2>
+                  {['Small', 'Medium', 'Large', 'Extra Large'].map((size) => (
+                    <div key={size} className="flex flex-row mt-2 p-4">
+                      <div className='mr-4'>
+                        <input
+                          type="checkbox"
+                          id={`size-${size.toLowerCase().replace(/ /g, '-')}`}
+                          name={`size-${size.toLowerCase().replace(/ /g, '-')}`}
+                          value={size.toLowerCase()}
+                          onChange={() => handleSizeChange(size.toLowerCase())}
+                          checked={sizes.includes(size.toLowerCase())}
+                        />
+                        <label htmlFor={`size-${size.toLowerCase().replace(/ /g, '-')}`}>{size}:</label>
                       </div>
-                    )}
-                </div>
-              <div className="flex flex-col w-[500px] h-full" ref={sizesRef}>
-                <h2 className="text-xl font-semibold">Sizes and Quantities</h2>
-                <div className="flex flex-row mt-2 p-4">
-                  <div className='mr-4'>
-                    <input type="radio" id="size-small" name="size" value="small" onChange={() => handleSizeChange('small')} checked={sizes === 'small'} />
-                    <label htmlFor="size-small">Small:</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={quantities[size.toLowerCase()] || ''}
+                        onChange={(e) => setQuantities({ ...quantities, [size.toLowerCase()]: parseInt(e.target.value) || 0 })}
+                      />
+                    </div>
+                  ))}
+                  <div className="flex flex-col mt-4">
+                    <h2 className="text-xl font-semibold">Shipping Address</h2>
+                    <div className="flex flex-col mt-2">
+                      <label htmlFor="address">Address:</label>
+                      <input id="address" type="text" />
+                    </div>
+                    <div className="flex flex-col mt-2">
+                      <label htmlFor="shipping-fee">Shipping Fee:</label>
+                      <input id="shipping-fee" type="text" value="150" disabled />
+                    </div>
                   </div>
-                  <input type="number" min="0" value={quantities.small || ''} onChange={(e) => setQuantities({ ...quantities, small: parseInt(e.target.value) || 0 })} />
-                </div>
-                <div className="flex flex-row mt-2 p-4">
-                  <div className='mr-4'>
-                    <input type="radio" id="size-medium" name="size" value="medium" onChange={() => handleSizeChange('medium')} checked={sizes === 'medium'} />
-                    <label htmlFor="size-medium">Medium:</label>
+                  <div className="flex flex-col mt-4">
+                    <h2 className="text-xl font-semibold">Total Price</h2>
+                    <div className="flex flex-col mt-2">
+                      <label htmlFor="total-price">Total Price:</label>
+                      <input id="total-price" type="text" defaultValue="250" disabled />
+                    </div>
                   </div>
-                  <input type="number" min="0" value={quantities.medium || ''} onChange={(e) => setQuantities({ ...quantities, medium: parseInt(e.target.value) || 0 })} />
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  >
+                    Place Order
+                  </button>
                 </div>
-                <div className="flex flex-row mt-2 p-4">
-                  <div className='mr-4'>
-                    <input type="radio" id="size-large" name="size" value="large" onChange={() => handleSizeChange('large')} checked={sizes === 'large'} />
-                    <label htmlFor="size-large">Large:</label>
-                  </div>
-                  <input type="number" min="0" value={quantities.large || ''} onChange={(e) => setQuantities({ ...quantities, large: parseInt(e.target.value) || 0 })} />
-                </div>
-                <div className="flex flex-row mt-2 p-4">
-                  <div className='mr-4'>
-                    <input type="radio" id="size-xl" name="size" value="extra-large" onChange={() => handleSizeChange('extra-large')} checked={sizes === 'extra-large'} />
-                    <label htmlFor="size-xl">Extra Large:</label>
-                  </div>
-                  <input type="number" min="0" value={quantities['extra-large'] || ''} onChange={(e) => setQuantities({ ...quantities, 'extra-large': parseInt(e.target.value) || 0 })} />
-                </div>
-
-                <div className="flex flex-col mt-4">
-                  <h2 className="text-xl font-semibold">Shipping Address</h2>
-                  <div className="flex flex-col mt-2">
-                    <label htmlFor="address">Address:</label>
-                    <input id="address" type="text" />
-                  </div>
-                  <div className="flex flex-col mt-2">
-                    <label htmlFor="shipping-fee">Shipping Fee:</label>
-                    <input id="shipping-fee" type="text" value="150" disabled />
-                  </div>
-                </div>
-                <div className="flex flex-col mt-4">
-                  <h2 className="text-xl font-semibold">Total Price</h2>
-                  <div className="flex flex-col mt-2">
-                    <label htmlFor="total-price">Total Price:</label>
-                    <input id="total-price" type="text" defaultValue="250" disabled />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                >
-                  Place Order
-                </button>
-              </div>
               </div>
             )}
           </div>
         </form>
-      <Footer></Footer>
-
+        <Footer></Footer>
       </main>
     </div>
   );
-}	
+}
