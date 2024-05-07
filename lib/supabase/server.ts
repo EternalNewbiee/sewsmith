@@ -89,3 +89,19 @@ export async function getOrders(){
 }
 
 
+export async function getUserInfo( id: any){
+  const supabase = createClient()
+  
+  
+  let { data, error } = await supabase.from('UserInfo').select('*').eq('userid', id )
+
+
+
+  if (!error) {
+    console.log(data);
+    return data;
+  }
+
+  return;
+
+}
