@@ -64,7 +64,6 @@ export default function OrderPage({ user }: { user: any }) {
     const fetchData = async () => {
       const userData = await getUser();
       const user = userData.user;
-      // Do something with user data
     };
     fetchData();
   }, []);
@@ -92,7 +91,7 @@ export default function OrderPage({ user }: { user: any }) {
             quantities: quantities[size] || 0,
             order_date: new Date().toISOString(),
             shipping_address: shippingAddress,
-            shipping_fee: shippingFee, // Changed to a number
+            shipping_fee: shippingFee, 
             total_price: totalPrice,
             user_id: user.id,
             status: status,

@@ -28,13 +28,13 @@ export async function cancelOrder(id: any) {
   return data;
 }
 
-export async function getOrders(){
+export async function getAllOrders(){
   const supabase = createClient();
     const currentUser = await supabase.auth.getUser();
     const { data, error } = await supabase
         .from('orders')
         .select('*')
-        .eq('user_id', currentUser?.data?.user?.id);
+      
 
     if (error) {
         console.error('Error fetching orders:', error.message);
@@ -42,3 +42,4 @@ export async function getOrders(){
 
     return data;
 }
+

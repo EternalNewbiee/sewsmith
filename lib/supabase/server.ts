@@ -88,4 +88,28 @@ export async function getOrders(){
     return data;
 }
 
+export async function getAllOrders(){
+  const supabase = createClient();
+    const currentUser = await supabase.auth.getUser();
+    const { data, error } = await supabase
+        .from('orders')
+        .select('*')
 
+    if (error) {
+        console.error('Error fetching orders:', error.message);
+    }
+
+    return data;
+}
+
+export async function getItems(){
+  const supabase = createClient();
+  const currentUser = await supabase.auth.getUser();
+
+  const{ data } = await supabase
+    .from('inventory')
+    .select('*')
+    .eq('user_id', currentUser?.data?.user?.id);
+    
+    return data;
+}
