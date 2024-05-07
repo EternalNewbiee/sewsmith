@@ -72,3 +72,12 @@ export async function sendPasswordRecovery(email: string) {
 
   return;
 }
+
+export async function getAllItems(){
+  const supabase = createClient();
+  let {data} = await supabase
+  .from('inventory')
+  .select('*')
+
+  return data;
+}

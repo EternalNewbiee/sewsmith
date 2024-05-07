@@ -12,3 +12,12 @@ export async function getUser() {
 
   return data;
 }
+
+export async function getAllItems(){
+  const supabase = createClient();
+  let {data} = await supabase
+  .from('inventory')
+  .select('*')
+
+  return data;
+}
