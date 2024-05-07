@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { getOrders } from "@/lib/supabase/client";
+import { getAllOrders } from "@/lib/supabase/client";
 import { cancelOrder } from "@/lib/supabase/client";
 
 interface Order {
@@ -18,7 +18,7 @@ export default function OrderHistory() {
 
     useEffect(() => {
         async function fetchOrders() {
-            const ordersData = await getOrders();
+            const ordersData = await getAllOrders();
             setOrders(ordersData as Order[]);
 
         }

@@ -46,7 +46,7 @@ const CustomDesign: React.FC<FileUploadProps> = ({ onFileUpload, onUploadComplet
                 type="file"
                 accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .rtf"
                 onChange={handleFileChange}
-                className="order-button bg-[#ffd700] px-5 py-3 rounded-[800px] text-white cursor-pointer"
+                className="order-button bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50 cursor-pointer"
               />
             </>
           )}
