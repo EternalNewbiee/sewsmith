@@ -4,6 +4,8 @@ import { getUser } from "@/lib/supabase/server";
 import { UserProvider } from "@/context/UserContext";
 import Header from "@/components/app/Header";
 import SideNavMenu from "@/components/app/SideNavMenu";
+import { getUserInfo } from "@/lib/supabase/server";
+
 
 export default async function DashboardLayout({
   children,
@@ -11,16 +13,20 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const { user } = await getUser();
+  const  details = await getUserInfo(user?.id);
 
   if (!user) {
     return redirect("/signin");
   }
-  if(user?.role != "admin") {
-    return redirect ("homepage")
+
+  console.log(details)
+  console.log(details?.[0]?.role)
+
+
+  if(details?.[0]?.role != "admin") {
+    return redirect ("/homepage")
   }
-  // if(user?.role != "admin"){
-  //   return redirect("/tasks")
-  // }
+
   
   return (
     <UserProvider>

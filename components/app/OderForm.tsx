@@ -114,7 +114,7 @@ export default function OrderPage({ user }: OrderFormProps) {
   
   return (
     <div className='bg-white h-auto w-screen flex items-center justify-center'>
-      <UserHeader></UserHeader>
+      {/* <UserHeader user = {user} ></UserHeader> */}
       <main className='mt-20'>
         <form onSubmit={handleSubmit} className='h-screen w-full'>
           <div className="flex flex-col bg-white h-full w-full p-4 justify-center">
