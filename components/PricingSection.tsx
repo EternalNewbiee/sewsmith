@@ -1,127 +1,73 @@
-import React from 'react'
-import { CheckIcon } from '@heroicons/react/20/solid'
+import React from 'react';
 
-
-const tiers = [
-  {
-    name: 'Freelancer',
-    id: 'tier-freelancer',
-    href: '#',
-    priceMonthly: '$24',
-    description: 'The essentials to provide your best work for clients.',
-    features: ['5 products', 'Up to 1,000 subscribers', 'Basic analytics', '48-hour support response time'],
-    mostPopular: false,
+const fabrics = [
+  { 
+    name: "Silk", 
+    image: "/img/silk.jpg", 
+    rating: 5 
   },
-  {
-    name: 'Startup',
-    id: 'tier-startup',
-    href: '#',
-    priceMonthly: '$32',
-    description: 'A plan that scales with your rapidly growing business.',
-    features: [
-      '25 products',
-      'Up to 10,000 subscribers',
-      'Advanced analytics',
-      '24-hour support response time',
-      'Marketing automations',
-    ],
-    mostPopular: true,
+  { 
+    name: "Cotton", 
+    image: "/img/cotton.jpg", 
+    rating: 4 
   },
-  {
-    name: 'Enterprise',
-    id: 'tier-enterprise',
-    href: '#',
-    priceMonthly: '$48',
-    description: 'Dedicated support and infrastructure for your company.',
-    features: [
-      'Unlimited products',
-      'Unlimited subscribers',
-      'Advanced analytics',
-      '1-hour, dedicated support response time',
-      'Marketing automations',
-    ],
-    mostPopular: false,
+  { 
+    name: "Linen", 
+    image: "/img/linen.jpg", 
+    rating: 4 
   },
-]
+  { 
+    name: "Wool", 
+    image: "/img/wool.jpg", 
+    rating: 5 
+  },
+  { 
+    name: "Denim", 
+    image: "/img/denim.jpg", 
+    rating: 3 
+  },
+  { 
+    name: "Velvet", 
+    image: "/img/velvet.jpg", 
+    rating: 5 
+  },
+];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
-
-const PricingSection = () => {
+const PricingSection: React.FC = () => {
   return (
-    <div className="py-24 sm:pt-48">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
-            <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Pricing plans for teams of&nbsp;all&nbsp;sizes
-            </p>
-        </div>
-        <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
-            Distinctio et nulla eum soluta et neque labore quibusdam. Saepe et quasi iusto modi velit ut non voluptas
-            in. Explicabo id ut laborum.
-        </p>
-        <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {tiers.map((tier, tierIdx) => (
-            <div
-                key={tier.id}
-                className={classNames(
-                tier.mostPopular ? 'lg:z-10 lg:rounded-b-none' : 'lg:mt-8',
-                tierIdx === 0 ? 'lg:rounded-r-none' : '',
-                tierIdx === tiers.length - 1 ? 'lg:rounded-l-none' : '',
-                'flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10'
-                )}
-            >
-                <div>
-                <div className="flex items-center justify-between gap-x-4">
-                    <h3
-                    id={tier.id}
-                    className={classNames(
-                        tier.mostPopular ? 'text-indigo-600' : 'text-gray-900',
-                        'text-lg font-semibold leading-8'
-                    )}
-                    >
-                    {tier.name}
-                    </h3>
-                    {tier.mostPopular ? (
-                    <p className="rounded-full bg-indigo-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-indigo-600">
-                        Most popular
-                    </p>
-                    ) : null}
-                </div>
-                <p className="mt-4 text-sm leading-6 text-gray-600">{tier.description}</p>
-                <p className="mt-6 flex items-baseline gap-x-1">
-                    <span className="text-4xl font-bold tracking-tight text-gray-900">{tier.priceMonthly}</span>
-                    <span className="text-sm font-semibold leading-6 text-gray-600">/month</span>
-                </p>
-                <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
-                    {tier.features.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
-                        <CheckIcon className="h-6 w-5 flex-none text-indigo-600" aria-hidden="true" />
-                        {feature}
-                    </li>
-                    ))}
-                </ul>
-                </div>
-                <a
-                href={tier.href}
-                aria-describedby={tier.id}
-                className={classNames(
-                    tier.mostPopular
-                    ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-500'
-                    : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
-                    'mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-                )}
-                >
-                Buy plan
-                </a>
+    <div className="bg-gray-100 py-16">
+      <div className="container mx-auto text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Our Fabrics</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {fabrics.map((fabric, index) => (
+            <div key={index} className="bg-white p-6 rounded-lg shadow-lg relative">
+              <div className="relative overflow-hidden rounded-lg" style={{ height: '12rem' }}>
+                <img 
+                  src={fabric.image} 
+                  alt={fabric.name} 
+                  className="w-full h-full object-cover transform transition-transform duration-300 ease-in-out hover:scale-110 cursor-pointer" 
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mt-4">{fabric.name}</h3>
+            
+              <div className="flex justify-center mt-2">
+                {Array(5).fill(0).map((_, starIndex) => (
+                  <svg 
+                    key={starIndex} 
+                    className={`h-5 w-5 ${starIndex < fabric.rating ? 'text-yellow-500' : 'text-gray-300'}`} 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 15l-5.09 2.64 1.27-5.54-4.42-3.84 5.77-.5L10 2l2.47 5.76 5.77.5-4.42 3.84 1.27 5.54L10 15z" />
+                  </svg>
+                ))}
+              </div>
             </div>
-            ))}
+          ))}
         </div>
-        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default PricingSection
+export default PricingSection;

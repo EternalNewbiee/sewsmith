@@ -1,60 +1,37 @@
-import React from 'react'
+import React from 'react';
 
-const LogoCloud = () => {
+const services = [
+  { name: "Express Delivery", tagline: "Your Orders Delivered Fast", image: "/img/express-delivery.png" },
+  { name: "Secure Shield", tagline: "Guaranteed Protection for Your Orders", image: "/img/shield.png" },
+  { name: "Quality Assurance", tagline: "Excellence You Can Trust", image: "/img/guarantee.png" },
+  { name: "Rapid Sewing Service", tagline: "High-Quality Sewing in Record Time", image: "/img/fast.png" },
+];
+
+const LogoCloud: React.FC = () => {
   return (
-    <div>
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-12 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 sm:gap-y-14 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-            <img
-              className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-              src="https://tailwindui.com/img/logos/158x48/transistor-logo-gray-900.svg"
-              alt="Transistor"
-              width={158}
-              height={48}
-            />
-            <img
-              className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-              src="https://tailwindui.com/img/logos/158x48/reform-logo-gray-900.svg"
-              alt="Reform"
-              width={158}
-              height={48}
-            />
-            <img
-              className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-              src="https://tailwindui.com/img/logos/158x48/tuple-logo-gray-900.svg"
-              alt="Tuple"
-              width={158}
-              height={48}
-            />
-            <img
-              className="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
-              src="https://tailwindui.com/img/logos/158x48/savvycal-logo-gray-900.svg"
-              alt="SavvyCal"
-              width={158}
-              height={48}
-            />
-            <img
-              className="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
-              src="https://tailwindui.com/img/logos/158x48/statamic-logo-gray-900.svg"
-              alt="Statamic"
-              width={158}
-              height={48}
-            />
-          </div>
-          <div className="mt-16 flex justify-center">
-            <p className="relative rounded-full px-4 py-1.5 text-sm leading-6 text-gray-600 ring-1 ring-inset ring-gray-900/10 hover:ring-gray-900/20">
-              <span className="hidden md:inline">
-                Transistor saves up to $40,000 per year, per employee by working with us.
-              </span>
-              <a href="#" className="font-semibold text-indigo-600">
+    <div className="bg-white py-8">
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center">
+          {services.map((service, index) => (
+            <div key={index} className="flex flex-col items-center mx-4">
+              <img src={service.image} alt={service.name} className="h-12 mb-2" />
+              <span className="text-gray-800 font-medium">{service.name}</span>
+              <span className="text-gray-600 text-sm">{service.tagline}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mt-8 text-center">
+        <p className="text-gray-600">
+          SewSmith is about sewing fabric in the style you like.{" "}
+           <a href="#" className="font-semibold text-indigo-600">
                 <span className="absolute inset-0" aria-hidden="true" /> Read our case study{' '}
                 <span aria-hidden="true">&rarr;</span>
               </a>
-            </p>
-          </div>
-        </div>
+        </p>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default LogoCloud
+export default LogoCloud;
