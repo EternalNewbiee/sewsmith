@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import OrderProcess from "@/components/app/OderProcess";
+import OrderProcess from "@/components/app/OrderProcess";
 import { getUser } from "@/lib/supabase/server";
 import UserHeader from "@/components/UserHeader";
 import Footer from "@/components/Footer"

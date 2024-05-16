@@ -133,11 +133,10 @@ export default function OrderPage({ user }: { user: any }) {
         <OrderForm
           productTitle={selectedProduct.title}
           productImage={selectedProduct.img}
-          productPrice={selectedProduct.price}
-        />
+          productPrice={selectedProduct.price} selectedProduct={undefined}        />
       ) : (
         <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-12">
-          <Card onClick={(title: string) => handleProductSelect(title)} />
+          <Card onClick={(product) => handleProductSelect(product)} />
           <div className="lg:col-span-1 md:col-span-1">
             {searchVisible && <Search />}
             {customizeVisible && <CustomizeCard />}

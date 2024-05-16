@@ -1,25 +1,39 @@
 // OrderForm.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { RadioGroup } from '@headlessui/react';
+import { FABRICS } from '@/components/app/fabric-option'
+import { getUser } from '@/lib/supabase/client';
 
+import cn from 'classnames'
 
 interface OrderFormProps {
   productTitle: string;
   productImage: string;
   productPrice: string;
+  selectedProduct: any;
 }
 
 export default function OrderForm({ productTitle, productImage, productPrice }: OrderFormProps) {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedFabric, setSelectedFabric] = useState<string>('');
+  const [selectedShirt, setSelectedShirt] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [color, setColor] = useState('');
   const [sizes, setSizes] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<{ [size: string]: number }>({});
   const sizesRef = useRef<HTMLDivElement>(null);
+  const supabase = createClient();
+  const [user, setUser] = useState<any>(null); 
+  
 
   const handleSizeChange = (size: string) => {
     setSelectedSize(size);
+    if (!sizes.includes(size)) {
+      setSizes([...sizes, size]); // Add the selected size
+    } else {
+      setSizes(sizes.filter(s => s !== size)); // Remove the deselected size
+    }
   };
 
   const handleFabricChange = (fabric: string) => {
@@ -30,6 +44,78 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     setSelectedColor(color);
   };
 
+    const [options, setOptions] = useState<{
+      fabric: (typeof FABRICS)[number]
+    }>({
+      fabric: FABRICS[0]
+    })
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userData = await getUser();
+      setUser(userData.user); // Set user state
+    };
+    fetchData();
+  }, []);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const shippingAddress = (document.getElementById(
+        'address'
+      ) as HTMLInputElement).value;
+      const shippingFee = 150;
+      const totalPrice = 250;
+      const status = 'pending';
+
+      for (const size of sizes) {
+        const { data, error } = await supabase.from('orders').insert([
+          {
+            fabric: selectedFabric,
+            shirt_type: productTitle,
+            color: selectedColor,
+            sizes: size,
+            quantities: quantities[size] || 0,
+            order_date: new Date().toISOString(),
+            shipping_address: shippingAddress,
+            shipping_fee: shippingFee,
+            total_price: totalPrice,
+            user_id: user.id,
+            status: status,
+          },
+        ]);
+
+        if (error) {
+          throw error;
+        }
+
+        console.log(`Order for ${size} inserted successfully:`, data);
+      }
+
+      // Reset form fields and states
+      setSelectedFabric('');
+      setSelectedColor('');
+      setSizes([]);
+      setQuantities({});
+
+      if (sizesRef.current) {
+        sizesRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    } catch (error) {
+      console.error(
+        'Error inserting order:',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+    }
+  };
+
+  
+
+
   return (
     <div className="flex">
       <div>
@@ -38,9 +124,35 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
         <p className='text-xl text-indigo-600'>{productPrice}</p>
       </div>
       <div className="lg:col-span-2 md:col-span-1">
-        <form className='h-screen w-full ml-40'>
+        <form className='h-screen w-full ml-40' onSubmit={handleSubmit}>
         <div className="flex flex-col w-[500px] h-full" ref={sizesRef}>
-                  <h2 className="text-xl font-semibold">Sizes and Quantities</h2>
+                  <h1 className="text-3xl font-semibold">Order Details Forms</h1>
+                  <div className='relative mt-4 h-full flex flex-col justify-between'>
+                    <RadioGroup 
+                      value={selectedFabric}
+                      onChange={(val) => setSelectedFabric(val)}>
+                      <label>Fabric: {selectedFabric}</label>
+                      <div className='mt-3 flex items-center space-x-3'>
+                        {FABRICS.map((fabric) => (
+                          <RadioGroup.Option
+                            key={fabric.label}
+                            value={fabric.label}
+                            className={({ active, checked }) => cn("relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 active:ring-0 focus:ring-0 active:outline-none focus:outline-none broder-2 border-transparent", 
+                            {
+                              [`border-${fabric.img}`]: active || checked,
+                            })}>
+                            <span className={cn(`bg-${fabric.img}`, "h-8 w-8 rounded-full border border-black border-opacity-10")}>
+                              <img
+                                src={fabric.img}
+                                alt={fabric.label}
+                                className="h-full w-full object-cover rounded-full"
+                              />
+                            </span>
+                          </RadioGroup.Option>
+                        ))}
+                      </div>
+                    </RadioGroup>
+                  </div>
                   {['Small', 'Medium', 'Large', 'Extra Large'].map((size) => (
                     <div key={size} className="flex flex-row mt-2 p-4">
                       <div className='mr-4'>
@@ -96,4 +208,3 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     </div>
   );
 };
-
