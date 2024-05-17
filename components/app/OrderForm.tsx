@@ -113,9 +113,6 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     }
   };
 
-  
-
-
   return (
     <div className="flex">
       <div>
