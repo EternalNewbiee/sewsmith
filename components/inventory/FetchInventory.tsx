@@ -1,8 +1,11 @@
-'use client';
+'use client'
 
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { createClient } from '@/lib/supabase/client';
+import { PlusIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { FunnelIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import InventoryStat from './InventoryStat';
 
 const supabase = createClient();
 
@@ -13,7 +16,7 @@ interface InventoryItem {
   fabric: string;
 }
 
-const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }) => {
+const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }: { isOpen: boolean, onClose: () => void, item: any, onSubmit: () => void, isEditMode: boolean }) => {
   const [color, setColor] = useState(item ? item.color : '');
   const [quantity, setQuantity] = useState(item ? item.quantity : 0);
   const [fabric, setFabric] = useState(item ? item.fabric : '');
@@ -27,49 +30,50 @@ const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }) => {
   }, [item]);
 
   const handleSubmit = async () => {
-
     try {
-      console.log('color:', color);
-      console.log('quantity:', quantity);
-      console.log('fabric:', fabric);
+        console.log('color:', color);
+        console.log('fabric:', fabric);
+        console.log('quantity:', quantity);
 
-      if (isEditMode) {
-        const { error } = await supabase
-          .from('inventory')
-          .update({ color, quantity, fabric })
-          .match({ id: item.id });
-        if (error) throw error;
-        onSubmit(item.id, color, quantity, fabric);
-        Swal.fire('Updated!', 'The item has been updated successfully.', 'success');
-      } else {
-        const { data, error } = await supabase
-          .from('inventory')
-          .insert([{ color, quantity, fabric }]);
-        if (error) throw error;
-
-        if ( !color || !quantity || !fabric ) {
+        if (!color || !quantity || !fabric) {
           Swal.fire('Error!', 'Kindly fill in all the necessary details before submitting.', 'error');
+        return;
         }
 
-        if (data && data.length > 0) {
-          const newItem = data[0];
-          onSubmit(newItem.id, newItem.color, newItem.quantity, newItem.fabric);
+        if (isEditMode) {
+            const { error } = await supabase
+                .from('inventory')
+                .update({ color, fabric, quantity })
+                .match({ id: item.id });
+            if (error) throw error;
+            console.log('Item updated successfully');
+            onSubmit();
+            Swal.fire('Updated!', 'The item has been updated successfully.', 'success');
+        } else {
+            const { error } = await supabase
+                .from('inventory')
+                .insert([{ color, fabric, quantity }]);
+            if (error) throw error;
+            console.log('Item added successfully');
+            onSubmit();
+            Swal.fire('Added!', 'The item has been added successfully.', 'success');
         }
-        Swal.fire('Added!', 'The item has been added successfully.', 'success');
-      }
-      onClose();
+        onClose();
     } catch (error) {
-      console.error('Error:', error);
-      Swal.fire('Error!', 'Something went wrong', 'error');
+        console.error('Error:', error);
+        Swal.fire('Error!', 'Something went wrong', 'error');
     }
-  };
+};
 
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg max-w-lg w-full flex flex-nowrap">
         <div className="p-5">
-          <h3 className="text-lg font-semibold">{isEditMode ? 'Edit Inventory Item' : 'Add Inventory Item'}</h3>
+          <div className="flex justify-between items-center mb-5">
+            <h3 className="text-lg font-semibold">{isEditMode ? 'Edit Inventory Item' : 'Add Inventory Item'}</h3>
+            <XMarkIcon className="w-8 h-8 text-red-500 hover:text-red-600" aria-hidden="true" onClick={onClose}/>
+          </div>
           <input
             type="text"
             className="mt-2 p-2 w-full border rounded"
@@ -78,18 +82,18 @@ const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }) => {
             onChange={(e) => setColor(e.target.value)}
           />
           <input
-            type="number"
-            className="mt-2 p-2 w-full border rounded"
-            placeholder="Quantity"
-            value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
-          />
-          <input
             type="text"
             className="mt-2 p-2 w-full border rounded"
             placeholder="Fabric"
             value={fabric}
             onChange={(e) => setFabric(e.target.value)}
+          />
+          <input
+            type="number"
+           className="mt-2 p-2 w-full border rounded"
+            placeholder="Quantity"
+            value={quantity}
+            onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
           />
           <div className="flex justify-end mt-4 space-x-2">
             <button onClick={onClose} className="px-4 py-2 rounded text-white bg-gray-500 hover:bg-gray-600">Cancel</button>
@@ -101,14 +105,31 @@ const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }) => {
   );
 };
 
+const FilterData = async () => {
+  
+}
+
 export default function FetchDataPage() {
   const [data, setData] = useState<InventoryItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (searchText.length > 0) {
+      const filteredData = data.filter(item =>
+        item.color.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.fabric.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setData(filteredData);
+    } else {
+      fetchData();
+    }
+  }, [searchText]);
 
   const fetchData = async () => {
     const { data: inventoryData, error } = await supabase
@@ -136,76 +157,115 @@ export default function FetchDataPage() {
     }
   };
 
-  const handleUpdate = (id: number, color: string, quantity: number, fabric: string) => {
-    setData(data.map(x => x.id === id ? { ...x, color, quantity, fabric } : x));
+  const handleUpdate = (id: number, color: string, fabric: string, quantity: number) => {
+    setData(data.map(x => x.id === id ? { ...x, color, fabric, quantity } : x));
+    fetchData();
   };
+  
 
   const handleAdd = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleSubmitAdd = (id: number, color: string, quantity: number, fabric: string) => {
-    setData([...data, { id, color, quantity, fabric }]);
+  const handleSubmitAdd = (id: number, color: string, fabric: string, quantity: number) => {
+    // setData([...data, { id, color, fabric, quantity }]);
+    setData(prevData => [...prevData, { id, color, fabric, quantity }]);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  // This is the function that handles order processing
+  const processOrder = async (orderItems: { id: number; quantity: number }[]) => {
+    try {
+      for (const orderItem of orderItems) {
+        const item = data.find(i => i.id === orderItem.id);
+        if (item) {
+          const newQuantity = item.quantity - orderItem.quantity;
+          if (newQuantity < 0) {
+            throw new Error(`Not enough fabric for item ID ${item.id}`);
+          }
+
+          // Update the item in the state
+          setData(prevData =>
+            prevData.map(i =>
+              i.id === item.id ? { ...i, quantity: newQuantity } : i
+            )
+          );
+
+          // Update the item in the database
+          const { error } = await supabase
+            .from('inventory')
+            .update({ quantity: newQuantity })
+            .match({ id: item.id });
+          if (error) throw error;
+        }
+      }
+      Swal.fire('Order Processed', 'The order has been processed successfully.', 'success');
+    } catch (error) {
+      console.error('Error processing order:', error);
+      Swal.fire('Error!', 'Failed to process the order.', 'error');
+    }
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-lg font-semibold text-gray-900">Inventory</h1>
-          <p className="text-sm text-gray-700">A list of all the items in the system including the Product ID, color, quantity, and fabric.</p>
+    <div className="px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col md:flex-row justify-between items-center"> 
+        <div className="mb-4 md:mb-4"> 
+          <h1 className="text-2xl font-semibold leading-7 text-gray-900">Inventory</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Manage your products, colors, fabrics, and quantities.
+          </p>
         </div>
-        <div className="mt-4 sm:mt-0 sm:ml-4">
-          <button onClick={handleAdd} className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Product</button>
-        </div>
+        <button 
+          onClick={handleAdd} 
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded inline-flex items-center"
+        >
+          <PlusIcon className="h-5 w-5 mr-2" />
+          Add Product
+        </button>
       </div>
-      <div className="mt-8 -mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th scope="col" className="w-1/6 text-center p-4 border-b border-gray-200 bg-blue-100 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Product ID
-                </th>
-                <th scope="col" className="w-1/6 text-center p-4 border-b border-gray-200 bg-blue-100 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Color
-                </th>
-                <th scope="col" className="w-1/3 text-center p-4 border-b border-gray-200 bg-blue-100 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Fabric
-                </th>
-                <th scope="col" className="w-1/6 text-center p-4 border-b border-gray-200 bg-blue-100 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Quantity (Roll)
-                </th>
-                <th scope="col" className="w-1/6 text-center p-4 border-b border-gray-200 bg-blue-100 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-          </table>
-          <div className="max-h-[546px]  min-w-full overflow-y-auto">
-            <table className="min-w-full divide-y divide-gray-300">
-              <tbody>
+      <InventoryStat/>
+      <div className="mt-8 flow-root">
+        <div className="mt-4 mb-4 flex justify-end">
+          <div className="relative rounded-md shadow-sm w-64">
+            <input
+              type="text"
+              name="search"
+              id="search-field"
+              className="block w-full rounded-md border-gray-300 pr-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Search by color or fabric"
+              value={searchText}
+              onChange={handleSearch}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+            </div>
+          </div>
+        </div>
+        <div className="sm:flex sm:items-center">
+          <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Product ID</th>
+                  <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Color</th>
+                  <th scope="col" className="w-1/3 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Fabric</th>
+                  <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Quantity (Roll)</th>
+                  <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
                 {data.map(item => (
                   <tr key={item.id}>
-                    <td className="w-1/6 text-center p-4 h-10 border-b border-gray-200 bg-white text-sm">
-                      {item.id}
-                    </td>
-                    <td className="w-1/6 text-center p-4 h-10 border-b border-gray-200 bg-white text-sm">
-                      {item.color}
-                    </td>
-                    <td className="w-1/3 text-center p-4 h-10 border-b border-gray-200 bg-white text-sm">
-                      {item.fabric}
-                    </td>
-                    <td className="w-1/6 text-center p-4 h-10 border-b border-gray-200 bg-white text-sm">
-                      {item.quantity}
-                    </td>
-                    <td className="w-1/6 text-center p-4 h-10 border-b border-gray-200 bg-white text-sm">
-                      <button onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:text-indigo-900 mr-4">
-                        Edit
-                      </button>
-                      <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-900">
-                        Delete
-                      </button>
+                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.id}</td>
+                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.color}</td>
+                    <td className="w-1/3 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.fabric}</td>
+                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                      <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-900">Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -214,8 +274,8 @@ export default function FetchDataPage() {
           </div>
         </div>
       </div>
-      <Modal isOpen={selectedItem != null} onClose={() => setSelectedItem(null)} item={selectedItem} onSubmit={handleUpdate} isEditMode />
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleSubmitAdd} item={undefined} isEditMode={false} />
+      <Modal isOpen={selectedItem != null} onClose={() => setSelectedItem(null)} item={selectedItem} onSubmit={() => handleUpdate} isEditMode />
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={() => handleSubmitAdd} item={undefined} isEditMode={false} />
     </div>
   );
 }

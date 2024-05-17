@@ -6,6 +6,7 @@ import ProductCard from '@/components/app/ProductCard';
 import CustomDesign from '@/components/app/CustomDesign';
 import UserHeader from '@/components/UserHeader';
 import Footer from '@/components/Footer';
+import Swal from 'sweetalert2';
 
 const supabaseUrl = 'https://aasjrchinevrqjlqldvr.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhc2pyY2hpbmV2cnFqbHFsZHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MjI0NjEsImV4cCI6MjAyNzI5ODQ2MX0.pa32Bwe9UvDxTkhXdP7swUvRuFUJp7He5f54w5pbj80';
@@ -56,12 +57,46 @@ export default function OrderPage() {
     console.log("Redirecting...");
   };
 
+  const updateInventory = async (fabricType: string, quantity: number) => {
+    try {
+      const { data: inventoryData, error } = await supabase
+        .from('inventory')
+        .select('*')
+        .eq('fabric', fabricType);
+      if (error) throw error;
+
+      if (inventoryData.length === 0) {
+        throw new Error('No matching fabric found in inventory');
+      }
+
+      const item = inventoryData[0];
+      const newQuantity = item.quantity - quantity;
+      if (newQuantity < 0) {
+        throw new Error(`Not enough ${fabricType} fabric in inventory`);
+      }
+
+      const { error: updateError } = await supabase
+        .from('inventory')
+        .update({ quantity: newQuantity })
+        .eq('id', item.id);
+      if (updateError) throw updateError;
+
+      console.log('Inventory updated successfully');
+    } catch (error) {
+      console.error('Error updating inventory:', error instanceof Error ? error.message : 'Unknown error');
+      throw error;
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const shippingAddress = (document.getElementById('address') as HTMLInputElement).value;
-      const shippingFee = 150; 
+      const shippingFee = 150;
       const total_price = 250;
+      const quantity = Object.values(quantities).reduce((acc, val) => acc + val, 0);
+
+      await updateInventory(fabric, quantity);
 
       const { data, error } = await supabase.from('orders').insert([
         {
@@ -93,8 +128,10 @@ export default function OrderPage() {
       if (sizesRef.current) {
         sizesRef.current.scrollIntoView({ behavior: 'smooth' });
       }
+      Swal.fire('Order Placed', 'Your order has been placed successfully.', 'success');
     } catch (error) {
       console.error('Error inserting order:', error instanceof Error ? error.message : 'Unknown error');
+      Swal.fire('Error!', 'Failed to place the order.', 'error');
     }
   };
   
