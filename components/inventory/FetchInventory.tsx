@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { createClient } from '@/lib/supabase/client';
 import { PlusIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { FunnelIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import InventoryStat from './InventoryStat';
 
 const supabase = createClient();
@@ -21,6 +20,7 @@ const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }: { isOpen: boolea
   const [quantity, setQuantity] = useState(item ? item.quantity : 0);
   const [fabric, setFabric] = useState(item ? item.fabric : '');
 
+  // Main Add & edit function
   useEffect(() => {
     if (item) {
       setColor(item.color);
@@ -47,24 +47,47 @@ const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }: { isOpen: boolea
                 .match({ id: item.id });
             if (error) throw error;
             console.log('Item updated successfully');
-            onSubmit();
             Swal.fire('Updated!', 'The item has been updated successfully.', 'success');
-        } else {
-            const { error } = await supabase
-                .from('inventory')
-                .insert([{ color, fabric, quantity }]);
-            if (error) throw error;
-            console.log('Item added successfully');
             onSubmit();
-            Swal.fire('Added!', 'The item has been added successfully.', 'success');
+        } else {
+           
+            const { data: existingItems, error: checkError } = await supabase
+                .from('inventory')
+                .select('*')
+                .eq('color', color)
+                .eq('fabric', fabric);
+
+            if (checkError) throw checkError;
+
+            if (existingItems.length > 0) {
+              
+                const existingItem = existingItems[0];
+                const newQuantity = existingItem.quantity + quantity;
+                const { error } = await supabase
+                    .from('inventory')
+                    .update({ quantity: newQuantity })
+                    .match({ id: existingItem.id });
+                if (error) throw error;
+                console.log('Quantity updated successfully');
+                Swal.fire('Updated!', 'The item quantity has been updated successfully.', 'success');
+            } else {
+               
+                const { error } = await supabase
+                    .from('inventory')
+                    .insert([{ color, fabric, quantity }]);
+                if (error) throw error;
+                console.log('Item added successfully');
+                Swal.fire('Added!', 'The item has been added successfully.', 'success');
+            }
+            onSubmit();
         }
         onClose();
     } catch (error) {
         console.error('Error:', error);
         Swal.fire('Error!', 'Something went wrong', 'error');
     }
-};
-
+  };
+    // Bubble UI 
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center p-4">
@@ -105,10 +128,7 @@ const Modal = ({ isOpen, onClose, item, onSubmit, isEditMode }: { isOpen: boolea
   );
 };
 
-const FilterData = async () => {
-  
-}
-
+// Delete,Update Function
 export default function FetchDataPage() {
   const [data, setData] = useState<InventoryItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
@@ -167,16 +187,15 @@ export default function FetchDataPage() {
     setIsAddModalOpen(true);
   };
 
-  const handleSubmitAdd = (id: number, color: string, fabric: string, quantity: number) => {
-    // setData([...data, { id, color, fabric, quantity }]);
-    setData(prevData => [...prevData, { id, color, fabric, quantity }]);
+  const handleSubmitAdd = () => {
+    fetchData();
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
 
-  // This is the function that handles order processing
+  //order processing function
   const processOrder = async (orderItems: { id: number; quantity: number }[]) => {
     try {
       for (const orderItem of orderItems) {
@@ -187,7 +206,7 @@ export default function FetchDataPage() {
             throw new Error(`Not enough fabric for item ID ${item.id}`);
           }
 
-          // Update the item in the state
+          // Update the item in the table
           setData(prevData =>
             prevData.map(i =>
               i.id === item.id ? { ...i, quantity: newQuantity } : i
@@ -208,7 +227,7 @@ export default function FetchDataPage() {
       Swal.fire('Error!', 'Failed to process the order.', 'error');
     }
   };
-
+    // Table UI
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col md:flex-row justify-between items-center"> 
@@ -274,8 +293,8 @@ export default function FetchDataPage() {
           </div>
         </div>
       </div>
-      <Modal isOpen={selectedItem != null} onClose={() => setSelectedItem(null)} item={selectedItem} onSubmit={() => handleUpdate} isEditMode />
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={() => handleSubmitAdd} item={undefined} isEditMode={false} />
+      <Modal isOpen={selectedItem != null} onClose={() => setSelectedItem(null)} item={selectedItem} onSubmit={() => handleUpdate} isEditMode={true} />
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleSubmitAdd} item={undefined} isEditMode={false} />
     </div>
   );
 }
