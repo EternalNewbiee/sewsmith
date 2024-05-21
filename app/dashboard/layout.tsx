@@ -23,9 +23,9 @@ export default async function DashboardLayout({
   console.log(details?.[0]?.role)
 
 
-  if(details?.[0]?.role != "admin") {
-    return redirect ("/homepage")
-  }
+  // if(details?.[0]?.role != "admin") {
+  //   return redirect ("/homepage")
+  // }
 
   
   return (

@@ -134,7 +134,7 @@ export default function OrderPage({ user }: { user: any }) {
 
 
   return (
-    <main className="container mx-auto py-36 px-8">
+    <main className="container mx-auto h-auto py-36 px-8 flex justify-center">
       {selectedProduct ? (
         <OrderForm
           productTitle={selectedProduct.title}
