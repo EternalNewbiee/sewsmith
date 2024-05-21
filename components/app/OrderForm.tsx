@@ -30,9 +30,9 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
   const handleSizeChange = (size: string) => {
     setSelectedSize(size);
     if (!sizes.includes(size)) {
-      setSizes([...sizes, size]); // Add the selected size
+      setSizes([...sizes, size]);
     } else {
-      setSizes(sizes.filter(s => s !== size)); // Remove the deselected size
+      setSizes(sizes.filter(s => s !== size));
     }
   };
 
@@ -53,7 +53,7 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
   useEffect(() => {
     const fetchData = async () => {
       const userData = await getUser();
-      setUser(userData.user); // Set user state
+      setUser(userData.user);
     };
     fetchData();
   }, []);
