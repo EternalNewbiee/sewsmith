@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
-
 export default function Header({ user }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -15,20 +14,20 @@ export default function Header({ user }) {
             <span className="sr-only">Your Company</span>
             <img
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt=""
+              src="/img/logo.png"
+              alt="Company Logo"
             />
           </a>
         </div>
-          <div className="py-6">
-            <a
-              href="/signin"
-              className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-            >
-              Log in
-            </a>
-          </div>
-        </nav>
+        <div className="py-6">
+          <a
+            href="/signin"
+            className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white hover:text-gray-900"
+          >
+            Log in
+          </a>
+        </div>
+      </nav>
     </header>
   );
 }

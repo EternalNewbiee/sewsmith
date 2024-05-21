@@ -22,7 +22,7 @@ const faqs = [
 const FAQs: React.FC = () => {
   return (
     <div className="bg-white py-16">
-      <div className="container mx-auto">
+      <div className="container mx-auto p-8">
         <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Frequently Asked Questions</h2>
         <div className="space-y-8">
           {faqs.map((faq, index) => (

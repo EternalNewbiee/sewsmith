@@ -37,7 +37,7 @@ const features = [
 const FeaturesSection: React.FC = () => {
   return (
     <div className="bg-white py-16">
-      <div className="container mx-auto text-center">
+      <div className="container mx-auto text-center p-8">
         <h2 className="text-3xl font-extrabold text-gray-900">Discover SewSmith Features</h2>
         <p className="mt-4 text-lg text-gray-600">Everything you need to bring your fabric designs to life</p>
         <div className="mt-10 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 gap-x-8">

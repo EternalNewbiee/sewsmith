@@ -3,12 +3,12 @@ import React from 'react';
 const Footer: React.FC = () => {
   return (
     <footer className="bg-white py-12">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-8">
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-8">
           <div>
             <img
               className="h-7"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src="/img/logo.png"
               alt="Company name"
             />
           </div>

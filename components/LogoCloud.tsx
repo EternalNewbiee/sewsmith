@@ -10,7 +10,7 @@ const services = [
 const LogoCloud: React.FC = () => {
   return (
     <div className="bg-white py-8">
-      <div className="container mx-auto">
+      <div className="container mx-auto p-8">
         <div className="flex justify-between items-center">
           {services.map((service, index) => (
             <div key={index} className="flex flex-col items-center mx-4">
