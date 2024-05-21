@@ -1,7 +1,9 @@
+// CustomizedCard.jsx
+
 import React, { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
-export default function CustomizeCard() {
+export default function CustomizeCard({ handleUploadComplete }: { handleUploadComplete: (file: File | null) => void }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +29,7 @@ export default function CustomizeCard() {
           setError(error.message);
         } else {
           console.log('File uploaded successfully:', data);
+          handleUploadComplete(file); // Pass uploaded file to callback function
         }
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Unexpected error occurred');
