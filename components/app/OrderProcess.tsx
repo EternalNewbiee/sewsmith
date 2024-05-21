@@ -134,12 +134,13 @@ export default function OrderPage({ user }: { user: any }) {
 
 
   return (
-    <main className="container mx-auto h-auto py-36 px-8 flex justify-center">
+    <main className="container mx-auto py-36 px-8">
       {selectedProduct ? (
         <OrderForm
           productTitle={selectedProduct.title}
           productImage={selectedProduct.img}
-          productPrice={selectedProduct.price} selectedProduct={undefined}        />
+          productPrice={selectedProduct.price} 
+        />
       ) : (
         <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-12">
           <Card onClick={(product) => handleProductSelect(product)} cardList={filteredCards} />
