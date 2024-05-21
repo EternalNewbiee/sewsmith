@@ -6,6 +6,28 @@ import { FABRICS } from '@/components/app/fabric-option';
 import { COLORS } from '@/components/app/color-option';
 import { getUser } from '@/lib/supabase/client';
 import cn from 'classnames';
+import { z } from 'zod';
+
+const orderFormSchema = z.object({
+  selectedSize: z.string().min(1, "Size is required"),
+  selectedFabric: z.string().min(1, "Fabric is required"),
+  selectedColor: z.string().min(1, "Color is required"),
+  quantities: z.record(z.string(), z.number().min(1, "Quantity must be at least 1")),
+}).refine(
+  (data) => {
+    const selectedSize = data.selectedSize;
+    const quantities = data.quantities;
+    // Ensure quantities are provided and valid if a size is selected
+    if (selectedSize && (!quantities[selectedSize] || quantities[selectedSize] < 1)) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Quantity must be at least 1 for the selected size",
+    path: ["quantities"], // Specify where to add the validation error in the path
+  }
+);
 
 interface OrderFormProps {
   productTitle: string;
@@ -58,6 +80,21 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const formData = {
+      selectedSize,
+      selectedFabric,
+      selectedColor,
+      shippingAddress,
+      quantities,
+    };
+
+    const validation = orderFormSchema.safeParse(formData);
+
+    if (!validation.success) {
+      console.error('Form validation errors:', validation.error.format());
+      return;
+    }
+
     // Check if productPrice is a valid number
     if (isNaN(price)) {
       console.error('Invalid product price:', productPrice);
@@ -84,7 +121,6 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
             sizes: size,
             quantities: quantities[size] || 0,
             order_date: new Date().toISOString(),
-            shipping_address: shippingAddress,
             shipping_fee: shippingFee,
             price: price,
             user_id: user.id,
