@@ -1,57 +1,47 @@
-import React from 'react';
+import React from 'react'
+import { Fragment } from 'react'
+import { Tab } from '@headlessui/react'
 
 const features = [
-  { 
-    title: "Custom Designs", 
-    description: "Tailor your fabric to your unique vision with our custom design services.", 
-    icon:"/img/sewing.png" 
-  },
-  { 
-    title: "High-Quality Materials", 
-    description: "We use only the finest materials to ensure your creations stand the test of time.", 
-    icon: "/img/high-quality.png" 
-  
-  },
-  { 
-    title: "Fast Turnaround", 
-    description: "Get your custom fabric quickly with our efficient production process.", 
-    icon: "/img/flash-sale.png"  
-  },
-  { 
-    title: "Expert Craftsmanship", 
-    description: "Our skilled artisans bring your fabric designs to life with precision and care.", 
-    icon:  "/img/leader.png"
-  },
-  { 
-    title: "Sustainable Practices", 
-    description: "We prioritize eco-friendly methods to reduce our environmental impact.", 
-    icon: "/img/brain.png" 
-  },
-  { 
-    title: "Customer Support", 
-    description: "Our team is here to help you with any questions or concerns you may have.", 
-    icon: "/img/help-desk.png" 
-  },
-];
+  { name: 'Origin', description: 'Conceived and crafted by SewSmith Designers.' },
+  { name: 'Material', description: '100% organic cotton, ethically sourced.' },
+  { name: 'Sizes', description: 'Available in XS, S, M, L, XL, XXL.' },
+  { name: 'Fit', description: 'Available in slim, regular, and relaxed fits to suit every body type.' },
+  { name: 'Care', description: 'Machine wash cold, tumble dry low. Iron on low heat. Avoid bleach.' },
+  { name: 'Customization', description: 'Custom fits and designs available upon request.' },
+]
 
-const FeaturesSection: React.FC = () => {
+const FeaturesSection = () => {
   return (
-    <div className="bg-white py-16">
-      <div className="container mx-auto text-center">
-        <h2 className="text-3xl font-extrabold text-gray-900">Discover SewSmith Features</h2>
-        <p className="mt-4 text-lg text-gray-600">Everything you need to bring your fabric designs to life</p>
-        <div className="mt-10 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 gap-x-8">
-          {features.map((feature, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <img src={feature.icon} alt={feature.title} className="h-12 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900">{feature.title}</h3>
-              <p className="mt-2 text-base text-gray-600 text-center">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="bg-white">
+    <div aria-hidden="true" className="relative">
+      <img
+        src="https://tailwindui.com/img/ecommerce-images/product-feature-02-full-width.jpg"
+        alt=""
+        className="h-96 w-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-white" />
     </div>
-  );
-}
 
-export default FeaturesSection;
+    <div className="relative mx-auto -mt-12 max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
+      <div className="mx-auto max-w-2xl text-center lg:max-w-4xl">
+        <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Back to the Basics</h2>
+        <p className="mt-4 text-gray-500">
+            SewSmith shirts blend impeccable craftsmanship with environmental consciousness. Each shirt is designed for comfort, style, and sustainability.
+          </p>
+      
+      </div>
+
+      <dl className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:max-w-none lg:grid-cols-3 lg:gap-x-8">
+        {features.map((feature) => (
+          <div key={feature.name} className="border-t border-gray-200 pt-4">
+            <dt className="font-medium text-gray-900">{feature.name}</dt>
+            <dd className="mt-2 text-sm text-gray-500">{feature.description}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+  )
+}
+export default FeaturesSection

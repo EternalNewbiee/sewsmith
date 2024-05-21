@@ -82,13 +82,46 @@ export default function OrderSummary() {
   const calculateTotal = () => {
     return calculateSubtotal() + calculateShipping();
   };
-  
+
+  const updateInventory = async (fabricType: string, quantity: number) => {
+    try {
+      const { data: inventoryData, error } = await supabase
+        .from('inventory')
+        .select('*')
+        .eq('fabric', fabricType);
+      if (error) throw error;
+
+      if (inventoryData.length === 0) {
+        throw new Error('No matching fabric found in inventory');
+      }
+
+      const item = inventoryData[0];
+      const newQuantity = item.quantity - quantity;
+      if (newQuantity < 0) {
+        throw new Error(`Not enough ${fabricType} fabric in inventory`);
+      }
+
+      const { error: updateError } = await supabase
+        .from('inventory')
+        .update({ quantity: newQuantity })
+        .eq('id', item.id);
+      if (updateError) throw updateError;
+
+      console.log('Inventory updated successfully');
+    } catch (error) {
+      console.error('Error updating inventory:', error instanceof Error ? error.message : 'Unknown error');
+      throw error;
+    }
+  };
 
   const handleConfirmOrder = async () => {
     if (user && userInfo) {
       try {
         for (const item of cart) {
-          const { fabric, shirt_type, sizes, color, quantities, status, shipping_address } = item
+          const { fabric, shirt_type, sizes, color, quantities, status, shipping_address } = item;
+
+          await updateInventory(fabric, quantities);  // Update inventory for each item
+
           const { data, error } = await supabase.from('orders').insert([
             {
               fabric,
@@ -114,11 +147,11 @@ export default function OrderSummary() {
             console.log('Order placed:', data)
           }
         }
-        await deleteCart() // Use deleteCart function to delete all items from the cart
+        await deleteCart(); // Use deleteCart function to delete all items from the cart
         router.push('/order_history');
-        console.log('Cart cleared')
+        console.log('Cart cleared');
       } catch (error) {
-        console.error('Error confirming order:', error)
+        console.error('Error confirming order:', error instanceof Error ? error.message : 'Unknown error');
       }
     }
   }
