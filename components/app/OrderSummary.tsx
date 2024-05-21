@@ -15,7 +15,7 @@ interface Cart {
   status: string
   shipping_address: string
   phone_number: string
-  price: number
+  price: string
 }
 
 interface UserInfo {
@@ -72,16 +72,17 @@ export default function OrderSummary() {
   }
 
   const calculateSubtotal = () => {
-    return cart.reduce((sum, item) => sum + item.quantities * item.price, 0)
-  }
-
+    return cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantities, 0);
+  };
+  
   const calculateShipping = () => {
-    return 150
-  }
-
+    return 150;
+  };
+  
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateShipping()
-  }
+    return calculateSubtotal() + calculateShipping();
+  };
+  
 
   const handleConfirmOrder = async () => {
     if (user && userInfo) {
@@ -304,8 +305,7 @@ export default function OrderSummary() {
                               {item.shirt_type}
                             </a>
                           </h4>
-                          <p className="mt-1 text-sm text-gray-500">{item.fabric}</p>
-                          <p className="mt-1 text-sm text-gray-500">{item.color}</p>
+                          <p className="mt-1 text-sm text-gray-500">{item.fabric} - {item.color}</p>
                           <p className="mt-1 text-sm text-gray-500">Size: {item.sizes}</p>
                           <p className="mt-1 text-sm text-gray-500">Quantity: {item.quantities}</p>
                         </div>

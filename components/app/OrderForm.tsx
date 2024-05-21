@@ -24,10 +24,12 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
   const [user, setUser] = useState<any>(null);
   const [shippingAddress, setShippingAddress] = useState<string>('');
   const [shippingFee, setShippingFee] = useState<number>(150);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-
   const router = useRouter();
-
+  
+  // Strip currency symbol and convert to number
+  const cleanedPrice = productPrice.replace(/[^\d.-]/g, '');
+  const price = parseFloat(cleanedPrice);
+  
   const handleSizeChange = (size: string) => {
     setSelectedSize(size);
     if (!sizes.includes(size)) {
@@ -53,12 +55,15 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    setTotalPrice(parseFloat(productPrice));
-  }, [productPrice]);
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Check if productPrice is a valid number
+    if (isNaN(price)) {
+      console.error('Invalid product price:', productPrice);
+      return;
+    }
+
     await handleCheckout();
   };
 
@@ -67,9 +72,9 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
       if (!user) {
         throw new Error('User not authenticated');
       }
-
+  
       const status = 'pending';
-
+      
       for (const size of sizes) {
         const { data, error } = await supabase.from('cart').insert([
           {
@@ -81,29 +86,29 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
             order_date: new Date().toISOString(),
             shipping_address: shippingAddress,
             shipping_fee: shippingFee,
-            total_price: totalPrice, // Use totalPrice here
+            price: price,
             user_id: user.id,
             status: status,
           },
         ]);
-
+  
         if (error) {
           throw error;
         }
-
+  
         console.log(`Order for ${size} inserted successfully:`, data);
       }
-
+  
       // Reset form fields and states
       setSelectedFabric('');
       setSelectedColor('');
       setSizes([]);
       setQuantities({});
-
+  
       if (sizesRef.current) {
         sizesRef.current.scrollIntoView({ behavior: 'smooth' });
       }
-
+  
       router.push('/order/checkout');
     } catch (error) {
       console.error(
