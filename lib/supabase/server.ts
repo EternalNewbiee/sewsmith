@@ -73,6 +73,22 @@ export async function sendPasswordRecovery(email: string) {
   return;
 }
 
+export async function getUserInfo( id: any){
+  const supabase = createClient()
+  
+  
+  let { data, error } = await supabase.from('UserInfo').select('*').eq('userid', id )
+
+
+
+    if (!error) {
+      console.log(data);
+      return data;
+    }
+    return;
+}
+
+
 export async function getOrders(){
   const supabase = createClient();
     const currentUser = await supabase.auth.getUser();
@@ -90,7 +106,6 @@ export async function getOrders(){
 
 export async function getAllOrders(){
   const supabase = createClient();
-    const currentUser = await supabase.auth.getUser();
     const { data, error } = await supabase
         .from('orders')
         .select('*')

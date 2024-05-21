@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React from 'react'
 
 export default function Example() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
 
   return (
     <div className="relative min-h-screen md:flex md:flex-row">

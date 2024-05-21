@@ -52,7 +52,7 @@ export async function signInWithPassword(formData: FormData) {
     return redirect(`/signin?${errorParams}`);
   }
 
-  return redirect("/dashboard");
+  return redirect("/homepage");
 }
 
 export async function signUp(formData: FormData) {
@@ -166,5 +166,5 @@ export async function resetPassword(formData: FormData) {
     );
   }
 
-  return redirect("/dashboard?success=Password reset successfully.");
+  return redirect("/homepage?success=Password reset successfully.");
 }

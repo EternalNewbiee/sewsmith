@@ -3,15 +3,28 @@ import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
+
+import { signOut } from "@/lib/auth";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+
+import { BellIcon } from "@heroicons/react/24/outline";
+import { type User } from "@supabase/supabase-js";
+
 const navigation = [
   { name: "Home", href: "#" },
   { name: "Shop", href: "/order" },
   { name: "About Us", href: "#" },
 ];
 
-export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+function classNames(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
+function Header({ user }: { user: User }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  console.log(user)
   return (
     <header className="absolute inset-x-0 top-0 z-50">
       <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
@@ -47,54 +60,127 @@ export default function Header() {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="/signin" className="text-sm font-semibold leading-6 text-black"> 
-            Log in
-          </a>
-        </div>
-      </nav>
-      <Dialog
-        as="div"
-        className="lg:hidden"
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-      >
-        <div className="fixed inset-0 z-50" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
+        <div className="flex items-center gap-x-4 lg:gap-x-6">
+          <button
+            type="button"
+            className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
+          >
+            <span className="sr-only">View notifications</span>
+            <BellIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+
+          {/* Separator */}
+          <div
+            className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
+            aria-hidden="true"
+          />
+
+          {/* Profile dropdown */}
+          <Menu as="div" className="relative">
+            <Menu.Button className="-m-1.5 flex items-center p-1.5">
+              <span className="sr-only">Open user menu</span>
               <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                className="h-8 w-8 rounded-full bg-gray-50"
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                 alt=""
               />
-            </a>
-          </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    {item.name}
-                  </a>
-                ))}
-              </div>
-              <div className="py-6">
-                <a
-                  href="/signin"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+              <span className="hidden lg:flex lg:items-center">
+                <span
+                  className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                  aria-hidden="true"
                 >
-                  Log in
-                </a>
-              </div>
-            </div>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
+                  {user.user_metadata.first_name}
+                </span>
+                <ChevronDownIcon
+                  className="ml-2 h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </span>
+            </Menu.Button>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="px-4 py-3">
+                  <p className="text-sm">Signed in as</p>
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {user.email}
+                  </p>
+                </div>
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <a
+                        href="#"
+                        className={classNames(
+                          active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                          "block px-4 py-2 text-sm"
+                        )}
+                      >
+                        Account settings
+                      </a>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <a
+                        href="#"
+                        className={classNames(
+                          active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                          "block px-4 py-2 text-sm"
+                        )}
+                      >
+                        Support
+                      </a>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <a
+                        href="#"
+                        className={classNames(
+                          active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                          "block px-4 py-2 text-sm"
+                        )}
+                      >
+                        License
+                      </a>
+                    )}
+                  </Menu.Item>
+                </div>
+                <div className="py-1">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          className={classNames(
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                            "block w-full px-4 py-2 text-left text-sm"
+                          )}
+                          onClick={async () => {
+                            await signOut();
+                          }}
+                        >
+                          Sign out
+                        </button>
+                      )}
+                    </Menu.Item>
+                </div>
+
+              </Menu.Items>
+            </Transition>
+          </Menu>
+        </div>
+        </div>
+      </nav>
+     
     </header>
   );
 }
+
+export default Header;
