@@ -1,40 +1,32 @@
-import React from 'react';
+import React from 'react'
 
 const faqs = [
   {
-    question: "How does SewSmith work?",
-    answer: "You choose a fabric, customize your design, and our artisans will craft it to perfection. It's that simple."
+    id: 1,
+    question: "What's the best thing about Switzerland?",
+    answer:
+      "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
   },
-  {
-    question: "What materials do you use?",
-    answer: "We use high-quality materials including silk, cotton, linen, wool, denim, and velvet."
-  },
-  {
-    question: "Can I track my order?",
-    answer: "Yes, you can track your order through our website using your order ID."
-  },
-  {
-    question: "Do you offer workshops?",
-    answer: "Yes, we offer workshops for different levels of sewing skills. Check our workshops page for more details."
-  },
-];
+  // More questions...
+]
 
-const FAQs: React.FC = () => {
+const FAQSection = () => {
   return (
-    <div className="bg-white py-16">
-      <div className="container mx-auto">
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Frequently Asked Questions</h2>
-        <div className="space-y-8">
-          {faqs.map((faq, index) => (
-            <div key={index} className="flex flex-col sm:flex-row">
-              <dt className="text-lg font-medium text-gray-900 sm:w-1/3">{faq.question}</dt>
-              <dd className="mt-2 text-base text-gray-600 sm:mt-0 sm:w-2/3">{faq.answer}</dd>
+    <div className="mx-auto max-w-2xl divide-y divide-gray-900/10 px-6 pb-8 sm:pb-24 sm:pt-12 lg:max-w-7xl lg:px-8 lg:pb-32">
+        <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">Frequently asked questions</h2>
+        <dl className="mt-10 space-y-8 divide-y divide-gray-900/10">
+        {faqs.map((faq) => (
+            <div key={faq.id} className="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+            <dt className="text-base font-semibold leading-7 text-gray-900 lg:col-span-5">{faq.question}</dt>
+            <dd className="mt-4 lg:col-span-7 lg:mt-0">
+                <p className="text-base leading-7 text-gray-600">{faq.answer}</p>
+            </dd>
             </div>
-          ))}
-        </div>
-      </div>
+        ))}
+        </dl>
     </div>
-  );
+
+  )
 }
 
-export default FAQs;
+export default FAQSection
