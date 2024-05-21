@@ -3,79 +3,68 @@ type CardItem = {
     img: string;
     title: string;
     price: string;
-    priceRange: string; // Add the priceRange property
 };
 
 const cardList: CardItem[] = [
     {
         id: 1,
-        img: "/img/t-shirt.jpg",
+        img: "/img/T-shirt.jpg",
         title: "T-Shirt",
-        price: "₱150-1K",
-        priceRange: "",
+        price: "150",
     },
     {
         id: 2,
-        img: "/img/long-sleeve.jpg",
+        img: "/img/Long Sleeve Shirt.jpg",
         title: "Long Sleeve Shirt",
-        price: "₱320-2K",
-        priceRange: "",
+        price: "320",
     },
     {
         id: 3,
-        img: "/img/polo-shirt.jpg",
+        img: "/img/Polo Shirt.jpg",
         title: "Polo Shirt",
-        price: "₱210-1.5K",
-        priceRange: "",
+        price: "210",
     },
     {
         id: 4,
-        img: "/img/long-sleeve-polo.jpg",
+        img: "/img/Long Sleeve Polo.jpg",
         title: "Long Sleeve Polo",
-        price: "₱350-2.5K",
-        priceRange: "",
+        price: "350",
     },
     {
         id: 5,
-        img: "/img/crop-top.jpg",
+        img: "/img/Crop Top.jpg",
         title: "Corp Top",
-        price: "₱80-1K",
-        priceRange: "",
+        price: "80",
     },
     {
         id: 6,
-        img: "/img/dress.jpg",
+        img: "/img/Dress.jpg",
         title: "Dress",
-        price: "₱450-2.5K",
-        priceRange: "",
+        price: "450",
     },
     {
         id: 7,
-        img: "/img/hoodie.jpg",
+        img: "/img/Hoodie.jpg",
         title: "Hoodie",
-        price: "₱450-2.5K",
-        priceRange: "",
+        price: "450",
     },    
     {
         id: 8,
-        img: "/img/jersey.jpg",
+        img: "/img/Sport Jersey.jpg",
         title: "Sport Jersey",
-        price: "₱450-2.5K",
-        priceRange: "",
+        price: "450",
     },
     {
         id: 9,
-        img: "/img/suit.jpg",
+        img: "/img/Suit.jpg",
         title: "Suit",
-        price: "₱450-2.5K",
-        priceRange: "",
+        price: "2500",
     },
 ].map(item => {
-    const [start, end] = item.price.split('-');
-    const startPrice = parseFloat(start.replace(/[^\d.]/g, ''));
-    const endPrice = parseFloat(end.replace(/[^\d.]/g, ''));
-    item.priceRange = `${startPrice.toLocaleString()} - ${endPrice.toLocaleString()} PHP`;
-    return item;
+    return {
+        ...item,
+        price: `₱${item.price}`,
+    };
 });
 
 export default cardList;
