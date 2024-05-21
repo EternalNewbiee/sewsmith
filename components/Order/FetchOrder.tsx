@@ -135,6 +135,7 @@ export default function FetchDataPage() {
                   <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Fabric</th>
                   <th scope="col" className="w-1/3 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Shirt Type</th>
                   <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Color</th>
+                  <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Size</th>
                   <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Quantities</th>
                   <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Order Date</th>
                   <th scope="col" className="w-1/6 text-center px-6 py-3 border-b border-gray-200 text-left text-xs font-large text-black-500 uppercase tracking-wider">Status</th>
@@ -148,6 +149,7 @@ export default function FetchDataPage() {
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.fabric}</td>
                     <td className="w-1/3 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.shirt_type}</td>
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.color}</td>
+                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sizes}</td>
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantities}</td>
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(item.order_date)}</td>
                     <td className={`w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm ${getStatusClass(item.status)}`}>{item.status}</td>
