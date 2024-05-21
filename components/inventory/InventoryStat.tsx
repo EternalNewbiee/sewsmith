@@ -10,7 +10,7 @@ const InventoryStat = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: inventoryData, error: inventoryError, count: inventoryCount } = await supabase
+      const { error: inventoryError, count: inventoryCount } = await supabase
         .from('inventory')
         .select('*', { count: 'exact' });
 

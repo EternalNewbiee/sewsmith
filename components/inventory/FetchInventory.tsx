@@ -8,6 +8,7 @@ import InventoryStat from './InventoryStat';
 
 const supabase = createClient();
 
+
 interface InventoryItem {
   id: number;
   color: string;
@@ -143,7 +144,9 @@ export default function FetchDataPage() {
     if (searchText.length > 0) {
       const filteredData = data.filter(item =>
         item.color.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.fabric.toLowerCase().includes(searchText.toLowerCase())
+        item.fabric.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.quantity.toString().includes(searchText.toLowerCase()) ||
+        item.id.toString().includes(searchText.toLowerCase())
       );
       setData(filteredData);
     } else {
@@ -254,7 +257,7 @@ export default function FetchDataPage() {
               name="search"
               id="search-field"
               className="block w-full rounded-md border-gray-300 pr-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Search by color or fabric"
+              placeholder="Search..."
               value={searchText}
               onChange={handleSearch}
             />
