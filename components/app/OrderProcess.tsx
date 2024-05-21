@@ -25,6 +25,7 @@ export default function OrderPage({ user }: { user: any }) {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [searchVisible, setSearchVisible] = useState(true);
   const [customizeVisible, setCustomizeVisible] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const supabase = createClient();
   
   const handleFabricSelect = (fabricType: string) => {
@@ -127,6 +128,11 @@ export default function OrderPage({ user }: { user: any }) {
     }
   };
 
+  const filteredCards = cardList.filter(card =>
+    card.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
   return (
     <main className="container mx-auto h-auto py-36 px-8 flex justify-center">
       {selectedProduct ? (
@@ -136,9 +142,9 @@ export default function OrderPage({ user }: { user: any }) {
           productPrice={selectedProduct.price} selectedProduct={undefined}        />
       ) : (
         <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-12">
-          <Card onClick={(product) => handleProductSelect(product)} />
+          <Card onClick={(product) => handleProductSelect(product)} cardList={filteredCards} />
           <div className="lg:col-span-1 md:col-span-1">
-            {searchVisible && <Search />}
+            {searchVisible && <Search onChange={setSearchQuery}/>}
             {customizeVisible && <CustomizeCard />}
           </div>
         </div>
