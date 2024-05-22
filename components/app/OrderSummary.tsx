@@ -5,6 +5,7 @@ import { getUser, getCart, cancelCart, getUserInfo, deleteCart, createClient } f
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation';
 import { z } from 'zod'
+import { getImage } from '@/lib/supabase/client'
 
 // Define Zod schema for validation
 const shippingSchema = z.object({
@@ -27,6 +28,7 @@ interface Cart {
   shipping_address: string
   phone_number: string
   price: string
+  custom_design: string;
 }
 
 interface UserInfo {

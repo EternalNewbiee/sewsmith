@@ -97,3 +97,15 @@ export async function getUserInfo( id: any){
 
     return data;
 }
+
+export async function getImage(shirtType: string) {
+  const supabase = createClient();
+  
+  const imagePath = `folder/${shirtType}.png`;
+
+  const { data } = await supabase
+    .storage
+    .from('public-bucket')
+    .getPublicUrl(imagePath);
+  return data.publicUrl;
+}
