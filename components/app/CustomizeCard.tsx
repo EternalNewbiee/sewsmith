@@ -56,7 +56,7 @@ export default function CustomizeCard({ handleUploadComplete }: { handleUploadCo
               </label>
               <p className="pl-1">or drag and drop</p>
             </div>
-            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+            <p className="text-xs leading-5 text-gray-600">PNG or JPG</p>
             {uploading && <p>Uploading...</p>}
             {error && <p className="text-red-500">{error}</p>}
           </div>
