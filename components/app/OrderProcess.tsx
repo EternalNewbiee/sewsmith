@@ -32,16 +32,14 @@ export default function OrderPage({ user }: { user: any }) {
 
   let selectedProduct = null;
   if (uploadedFile) {
-
     selectedProduct = {
-      title: 'Custom Design',
+      title: 'Customized Pattern',
       price: '₱500',
       img: URL.createObjectURL(uploadedFile)
     };
   } else if (selectedCard) {
     selectedProduct = selectedCard;
   }
-  
 
   return (
     <main className="container mx-auto py-36 px-8">

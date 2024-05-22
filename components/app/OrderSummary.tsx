@@ -4,20 +4,8 @@ import { CheckCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { getUser, getCart, cancelCart, getUserInfo, deleteCart, createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation';
-import { z } from 'zod'
-import { getImage } from '@/lib/supabase/client'
-
-// Define Zod schema for validation
-const shippingSchema = z.object({
-  shipping_address: z.string().nonempty("Shipping address is required"),
-  city: z.string().nonempty("City is required"),
-  region: z.string().nonempty("Region is required"),
-  postal_code: z.string().nonempty("Postal code is required"),
-  phone_number: z.string().nonempty("Phone number is required"),
-})
 
 interface Cart {
-  inStock: any
   id: string
   fabric: string
   color: string
@@ -28,7 +16,6 @@ interface Cart {
   shipping_address: string
   phone_number: string
   price: string
-  custom_design: string;
 }
 
 interface UserInfo {
@@ -130,17 +117,6 @@ export default function OrderSummary() {
   const handleConfirmOrder = async () => {
     if (user && userInfo) {
       try {
-        // Validate shipping information
-        const shippingInfo = {
-          shipping_address,
-          city,
-          region,
-          postal_code,
-          phone_number,
-        }
-
-        shippingSchema.parse(shippingInfo); // Validate using Zod
-
         for (const item of cart) {
           const { fabric, shirt_type, sizes, color, quantities, status, shipping_address } = item;
 
@@ -175,12 +151,7 @@ export default function OrderSummary() {
         router.push('/order_history');
         console.log('Cart cleared');
       } catch (error) {
-        if (error instanceof z.ZodError) {
-          console.error('Validation error:', error.errors);
-          alert('Please fill out all required fields correctly.');
-        } else {
-          console.error('Error confirming order:', error instanceof Error ? error.message : 'Unknown error');
-        }
+        console.error('Error confirming order:', error instanceof Error ? error.message : 'Unknown error');
       }
     }
   }
@@ -264,8 +235,8 @@ export default function OrderSummary() {
                     <div className="mt-1">
                       <input
                         type="text"
-                        id="address"
                         name="address"
+                        id="address"
                         autoComplete="street-address"
                         value={shipping_address}
                         onChange={(e) => setShippingAddress(e.target.value)}
@@ -274,64 +245,67 @@ export default function OrderSummary() {
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2">
+                  <div>
                     <label htmlFor="city" className="block text-sm font-medium text-gray-700">
                       City
                     </label>
                     <div className="mt-1">
                       <input
                         type="text"
-                        id="city"
                         name="city"
+                        id="city"
+                        autoComplete="address-level2"
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => setCity(e.target.value)} // Add this line to handle changes
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2">
+                  <div>
                     <label htmlFor="region" className="block text-sm font-medium text-gray-700">
-                      State / Province
+                      Region
                     </label>
                     <div className="mt-1">
                       <input
                         type="text"
-                        id="region"
                         name="region"
+                        id="region"
+                        autoComplete="address-level1"
                         value={region}
-                        onChange={(e) => setRegion(e.target.value)}
+                        onChange={(e) => setRegion(e.target.value)} // Add this line to handle changes
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2">
+                  <div>
                     <label htmlFor="postal-code" className="block text-sm font-medium text-gray-700">
                       Postal code
                     </label>
                     <div className="mt-1">
                       <input
                         type="text"
-                        id="postal-code"
                         name="postal-code"
+                        id="postal-code"
                         autoComplete="postal-code"
                         value={postal_code}
-                        onChange={(e) => setPostalCode(e.target.value)}
+                        onChange={(e) => setPostalCode(e.target.value)} // Add this line to handle changes
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="sm:col-span-2">
-                    <label htmlFor="phone-number" className="block text-sm font-medium text-gray-700">
-                      Phone number
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                      Phone
                     </label>
                     <div className="mt-1">
                       <input
                         type="text"
-                        id="phone-number"
-                        name="phone-number"
+                        name="phone"
+                        id="phone"
                         autoComplete="tel"
                         value={phone_number}
                         onChange={(e) => setPhoneNumber(e.target.value)}
@@ -342,26 +316,6 @@ export default function OrderSummary() {
                 </div>
               )}
             </div>
-
-            <div className="mt-10 border-t border-gray-200 pt-10">
-              <fieldset>
-                <legend className="text-lg font-medium text-gray-900">Payment details</legend>
-                <div className="mt-4 space-y-4">
-                  <div className="flex items-center">
-                    <input
-                      id="cash"
-                      name="payment-type"
-                      type="radio"
-                      value="cash"
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="cash" className="ml-3 block text-sm font-medium text-gray-700">
-                      Cash on delivery
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
           </div>
 
           <div className="mt-10 lg:mt-0">
@@ -370,79 +324,84 @@ export default function OrderSummary() {
             <div className="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
               <h3 className="sr-only">Items in your cart</h3>
               <ul role="list" className="divide-y divide-gray-200">
-                {cart.map((product) => (
-                  <li key={product.id} className="flex px-4 py-6 sm:px-6">
+                {cart.map((item) => (
+                  <li key={item.id} className="flex px-4 py-6 sm:px-6">
                     <div className="flex-shrink-0">
-                      <img
-                        src={`/img/${product.shirt_type}.jpg`} alt={product.shirt_type} className="h-20 w-20 rounded-md" 
-                      />
+                      <img src={`/img/${item.shirt_type}.jpg`} alt={item.shirt_type} className="h-20 w-20 rounded-md" />
                     </div>
 
                     <div className="ml-6 flex flex-1 flex-col">
-                      <div>
-                        <div className="flex justify-between">
+                      <div className="flex">
+                        <div className="min-w-0 flex-1">
                           <h4 className="text-sm">
-                            <a href={product.shirt_type} className="font-medium text-gray-700 hover:text-gray-800">
-                              {product.shirt_type}
+                            <a href="#" className="font-medium text-gray-700 hover:text-gray-800">
+                              {item.shirt_type}
                             </a>
                           </h4>
-                          <p className="ml-4 text-sm font-medium text-gray-900">{product.price}</p>
+                          <p className="mt-1 text-sm text-gray-500">{item.fabric} - {item.color}</p>
+                          <p className="mt-1 text-sm text-gray-500">Size: {item.sizes}</p>
+                          <p className="mt-1 text-sm text-gray-500">Quantity: {item.quantities}</p>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500">{product.color}</p>
-                        <p className="mt-1 text-sm text-gray-500">{product.sizes}</p>
-                      </div>
 
-                      <div className="flex flex-1 items-end justify-between pt-2">
-                        <p className="flex items-center space-x-2 text-sm text-gray-700">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
-                          <span>{product.inStock ? 'In stock' : 'Out of stock'}</span>
-                        </p>
-                        <div className="flex">
+                        <div className="ml-4 flow-root flex-shrink-0">
                           <button
                             type="button"
-                            onClick={() => handleCancelOrder(product.id)}
-                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                            className="-m-2.5 inline-flex p-2.5 text-gray-400 hover:text-gray-500"
+                            onClick={() => handleCancelOrder(item.id)}
                           >
-                            <TrashIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
                             <span className="sr-only">Remove</span>
+                            <TrashIcon className="h-5 w-5" aria-hidden="true" />
                           </button>
+                        </div>
+                      </div>
+                      <div className="flex items-end justify-between pt-2">
+                        <div className="ml-auto flex items-center">
+                          <CheckCircleIcon
+                            className={`h-5 w-5 ${item.status === 'completed' ? 'text-green-500' : 'text-gray-300'}`}
+                            aria-hidden="true"
+                          />
+                          <p className="ml-2 text-sm font-medium text-gray-900">{item.status}</p>
                         </div>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
-              <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Subtotal</dt>
-                  <dd className="text-sm font-medium text-gray-900">${calculateSubtotal()}</dd>
+              <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                <div className="flex justify-between text-base font-medium text-gray-900">
+                  <p>Subtotal</p>
+                  <p>₱{calculateSubtotal()}</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Shipping</dt>
-                  <dd className="text-sm font-medium text-gray-900">${calculateShipping()}</dd>
+                <div className="flex justify-between text-base font-medium text-gray-900">
+                  <p>Shipping</p>
+                  <p>₱{calculateShipping()}</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Total</dt>
-                  <dd className="text-sm font-medium text-gray-900">${calculateTotal()}</dd>
+                <div className="flex justify-between text-base font-medium text-gray-900">
+                  <p>Total</p>
+                  <p>₱{calculateTotal()}</p>
                 </div>
-              </dl>
-            </div>
-
-            <div className="mt-6 flex justify-between">
-              <button
-                type="button"
-                onClick={CancelOrder}
-                className="flex items-center justify-center rounded-md border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmOrder}
-                className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-              >
-                Confirm order
-              </button>
+                <div className="mt-6">
+                  <button
+                    type="button"
+                    className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={handleConfirmOrder}
+                  >
+                    Confirm order
+                  </button>
+                </div>
+                <div className="mt-6 flex justify-center text-sm text-gray-500">
+                  <p>
+                    or{' '}
+                    <a
+                      href="#"
+                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                      onClick={CancelOrder}
+                    >
+                      Cancel order
+                    </a>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </form>
