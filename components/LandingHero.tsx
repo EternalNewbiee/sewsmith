@@ -1,7 +1,7 @@
-import React from 'react'
+import { useState } from 'react';
 
 export default function LandingHero() {
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="overflow-hidden">

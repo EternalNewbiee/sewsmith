@@ -1,85 +1,112 @@
-import { redirect } from "next/navigation";
+"use client";
 
-import { resetPassword } from "@/lib/auth";
-import { getUser } from "@/lib/supabase/server";
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { resetPassword } from '@/lib/auth';
 
-export default async function SignIn({ searchParams }: { searchParams: any }) {
-  const { user } = await getUser();
-  if (!user) {
-    return redirect("/signin");
-  }
+export default function ResetPassword() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const token = searchParams.get('code'); 
+    const email = searchParams.get('email'); 
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [message, setMessage] = useState('');
 
-  return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="m-3 rounded-lg bg-white px-6 py-12 shadow sm:px-12">
-            <div className="mb-6 sm:mx-auto sm:w-full sm:max-w-md">
-              <img
-                className="mx-auto h-10 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt="Your Company"
-              />
-              <h2 className="mt-3 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Reset your password
-              </h2>
-              <p className="text-center text-sm text-gray-600">
-                Enter a new password for your account.
-              </p>
-            </div>
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!token || !email) {
+            setMessage('Token or email is missing or invalid.');
+            return;
+        }
 
-            {(searchParams?.error || searchParams?.success) && (
-              <div
-                className={`rounded-md ${searchParams.error ? "bg-red-50" : "bg-green-50"} p-4`}
-              >
-                <p
-                  className={`text-center text-sm font-medium ${searchParams?.error ? "text-red-800" : "text-green-800"}`}
-                >
-                  {searchParams?.error} {searchParams?.success}
-                </p>
-              </div>
-            )}
+        if (password !== confirmPassword) {
+            setMessage('Passwords do not match.');
+            return;
+        }
 
-            <form action={resetPassword} className="space-y-3">
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="password"
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+        try {
+            await resetPassword(password, token, email);
+            setMessage('Your password has been successfully reset.');
+            setTimeout(() => router.push('/signin'), 3000); 
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setMessage(`Failed to reset password. ${error.message}`);
+            } else {
+                setMessage('Failed to reset password due to an unknown error');
+            }
+        }
+    };
+
+    return (
+        <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+            <div
+                className="absolute inset-0"
+                style={{
+                    background: `linear-gradient(rgba(0, 97, 242, 0.9), rgba(0, 97, 242, 0.2)), url('/img/bg.jpg')`,
+                    backgroundSize: 'cover',
+                    backgroundBlendMode: 'overlay',
+                    filter: 'blur(8px)',
+                    zIndex: -1,
+                }}
+            />
+            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+                <div className="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+                    <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">Reset Your Password</h2>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                New Password
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                                Confirm Password
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <button
+                                type="submit"
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white"
+                                style={{ backgroundColor: '#005DC5' }}
+                            >
+                                Reset Password
+                            </button>
+                        </div>
+                    </form>
+                    {message && (
+                        <div
+                            className={`mt-6 text-center text-sm font-medium ${
+                                message.includes('successfully') ? 'text-green-600' : 'text-red-600'
+                            }`}
+                        >
+                            {message}
+                        </div>
+                    )}
                 </div>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Reset Password
-                </button>
-              </div>
-            </form>
-          </div>
-          <p className="mt-6 text-center text-sm text-gray-500">
-            <a
-              href="/signin"
-              className="font-semibold  text-indigo-600 hover:text-indigo-500"
-            >
-              Return to login
-            </a>
-          </p>
+            </div>
         </div>
-      </div>
-    </>
-  );
+    );
 }

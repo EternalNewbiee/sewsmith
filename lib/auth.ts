@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
+
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email format" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters long" }), // Customizing the minimum length message
@@ -52,7 +53,7 @@ export async function signInWithPassword(formData: FormData) {
     return redirect(`/signin?${errorParams}`);
   }
 
-  return redirect("/homepage");
+  return redirect("/dashboard");
 }
 
 export async function signUp(formData: FormData) {
@@ -111,15 +112,12 @@ export async function signInWith(provider: Provider) {
   return redirect(data.url);
 }
 
-const resetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long." }),
-});
+
 
 const forgotPasswordSchema = z.object({
   email: z.string().email({ message: "Invalid email format." }),
 });
+
 
 export async function forgotPassword(formData: FormData) {
   const result = forgotPasswordSchema.safeParse({
@@ -130,11 +128,14 @@ export async function forgotPassword(formData: FormData) {
     const errors = result.error.issues.map((issue) => issue.message).join(", ");
     return redirect(`/forgot-password?error=${errors}`);
   }
+
   const { email } = result.data;
   const origin = headers().get("origin");
   const supabase = createClient();
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/reset-password?email=${email}`,
+  });
 
   if (error) {
     return redirect(`/forgot-password?error=${error.message || "Could not send email."}`);
@@ -145,26 +146,25 @@ export async function forgotPassword(formData: FormData) {
   );
 }
 
-export async function resetPassword(formData: FormData) {
-  const result = resetPasswordSchema.safeParse({
-    password: formData.get("password"),
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, { message: "Password must be at least 8 characters long." }),
+});
+
+
+// In your lib/auth.ts or similar file
+export async function resetPassword(password: string, token: string, email: string): Promise<void> {
+  // Your API call to backend to reset the password
+  // This is a placeholder, replace with actual API call logic
+  console.log('Resetting password', { password, token, email });
+  // Example of handling response or error
+  return new Promise((resolve, reject) => {
+      // Mock of an asynchronous operation
+      setTimeout(() => {
+          if (password && token && email) {
+              resolve();
+          } else {
+              reject('Invalid data');
+          }
+      }, 1000);
   });
-
-  if (!result.success) {
-    const errors = result.error.issues.map((issue) => issue.message).join(", ");
-    return redirect(`/reset-password?error=${errors}`);
-  }
-
-  const { password } = result.data;
-
-  const supabase = createClient();
-  const { error } = await supabase.auth.updateUser({ password });
-
-  if (error) {
-    return redirect(
-      `/reset-password?error=${error.message || "Could not reset password."}`
-    );
-  }
-
-  return redirect("/homepage?success=Password reset successfully.");
 }

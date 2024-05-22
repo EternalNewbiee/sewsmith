@@ -2,26 +2,26 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
-
+ 
+ 
 import { signOut } from "@/lib/auth";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-
+ 
 import { BellIcon } from "@heroicons/react/24/outline";
 import { type User } from "@supabase/supabase-js";
-
+ 
 const navigation = [
   { name: "Home", href: "#" },
   { name: "Shop", href: "/order" },
   { name: "About Us", href: "#" },
 ];
-
+ 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
-
+ 
 function Header({ user }: { user: User }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   console.log(user)
@@ -33,7 +33,7 @@ function Header({ user }: { user: User }) {
             <span className="sr-only">Your Company</span>
             <img
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src="/img/logo.png"
               alt=""
             />
           </a>
@@ -53,7 +53,7 @@ function Header({ user }: { user: User }) {
             <a
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-black" 
+              className="text-sm font-semibold leading-6 text-black"
             >
               {item.name}
             </a>
@@ -68,13 +68,13 @@ function Header({ user }: { user: User }) {
             <span className="sr-only">View notifications</span>
             <BellIcon className="h-6 w-6" aria-hidden="true" />
           </button>
-
+ 
           {/* Separator */}
           <div
             className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
             aria-hidden="true"
           />
-
+ 
           {/* Profile dropdown */}
           <Menu as="div" className="relative">
             <Menu.Button className="-m-1.5 flex items-center p-1.5">
@@ -171,7 +171,7 @@ function Header({ user }: { user: User }) {
                       )}
                     </Menu.Item>
                 </div>
-
+ 
               </Menu.Items>
             </Transition>
           </Menu>
@@ -182,5 +182,5 @@ function Header({ user }: { user: User }) {
     </header>
   );
 }
-
+ 
 export default Header;
