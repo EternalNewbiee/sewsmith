@@ -15,7 +15,7 @@ interface Order {
   shirt_type: string;
   design_file: string | null;
   color: string;
-  sizes: string[];
+  sizes: string;
   quantities: number;
   order_date: string;
   shipping_address: string;
@@ -53,7 +53,9 @@ export default function FetchDataPage() {
         item.fabric.toLowerCase().includes(searchText.toLowerCase()) ||
         item.id.toString().includes(searchText.toLowerCase()) ||
         item.order_date.toString().includes(searchText.toLowerCase()) ||
-        item.quantities.toString().includes(searchText.toLowerCase())
+        item.quantities.toString().includes(searchText.toLowerCase())||
+        item.sizes.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.color.toLowerCase().includes(searchText.toLowerCase())
       );
       setFilteredData(filtered);
     } else {
