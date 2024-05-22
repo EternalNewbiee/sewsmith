@@ -109,3 +109,11 @@ export async function getImage(shirtType: string) {
     .getPublicUrl(imagePath);
   return data.publicUrl;
 }
+export async function getAllItems(){
+  const supabase = createClient();
+  let {data} = await supabase
+  .from('inventory')
+  .select('*')
+
+  return data;
+}

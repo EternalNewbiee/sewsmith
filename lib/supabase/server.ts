@@ -128,3 +128,11 @@ export async function getItems(){
     
     return data;
 }
+export async function getAllItems(){
+  const supabase = createClient();
+  let {data} = await supabase
+  .from('inventory')
+  .select('*')
+
+  return data;
+}

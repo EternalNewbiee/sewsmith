@@ -29,5 +29,4 @@ export default async function DashboardPage({
       </div>
     <Footer/>
     </div>
-  );
 }

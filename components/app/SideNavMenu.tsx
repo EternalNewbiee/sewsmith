@@ -21,7 +21,7 @@ const navigation = [
   { name: "Users", href: "/dashboard/users", icon: UsersIcon, current: false },
   { name: "Orders", href: "/dashboard/order_user_history", icon: FolderIcon, current: false },
   { name: "Task", href: "#", icon: CalendarIcon, current: false },
-  { name: "Inventory", href: "#", icon: DocumentDuplicateIcon, current: false },
+  { name: "Inventory", href: "/dashboard/inventory", icon: DocumentDuplicateIcon, current: false },
   { name: "Finance", href: "#", icon: ChartPieIcon, current: false },
   { name: "Employee", href: "/dashboard/users", icon: UsersIcon, current: false },
 ];
