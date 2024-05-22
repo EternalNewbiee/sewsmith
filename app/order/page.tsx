@@ -1,4 +1,6 @@
-import Orderform from "@/components/app/OderForm";
+import { redirect } from "next/navigation";
+
+import OrderProcess from "@/components/app/OrderProcess";
 import { getUser } from "@/lib/supabase/server";
 
 
