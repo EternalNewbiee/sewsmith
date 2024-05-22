@@ -1,10 +1,15 @@
 import { createClient } from '@/lib/supabase/client';
 import { useState, useEffect } from 'react';
-import { ChartPieIcon, ClockIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { ChartPieIcon, ClockIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const supabase = createClient();
 
-const OrderStat = () => {
+
+interface OrderStatProps {
+  onStatusClick: (status: string) => void;
+}
+
+const OrderStat: React.FC<OrderStatProps> = ({ onStatusClick }) => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
   const [completedOrders, setCompletedOrders] = useState(0);
@@ -56,7 +61,7 @@ const OrderStat = () => {
       if (cancelledError) {
         console.error('Error fetching cancelled orders data:', cancelledError);
       } else {
-        setCancelledOrders(cancelledCount || 0);  // Corrected line
+        setCancelledOrders(cancelledCount || 0);
       }
     };
 
@@ -64,8 +69,11 @@ const OrderStat = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div
+        className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between cursor-pointer"
+        onClick={() => onStatusClick('')}
+      >
         <div>
           <p className="text-blue-500">Total Orders</p>
           <p className="text-2xl font-semibold text-gray-900">{totalOrders}</p>
@@ -74,7 +82,10 @@ const OrderStat = () => {
           <ChartPieIcon className="h-6 w-6" />
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between">
+      <div
+        className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between cursor-pointer"
+        onClick={() => onStatusClick('pending')}
+      >
         <div>
           <p className="text-yellow-500">Pending Orders</p>
           <p className="text-2xl font-semibold text-gray-900">{pendingOrders}</p>
@@ -83,7 +94,10 @@ const OrderStat = () => {
           <ClockIcon className="h-6 w-6" />
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between">
+      <div
+        className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between cursor-pointer"
+        onClick={() => onStatusClick('completed')}
+      >
         <div>
           <p className="text-green-500">Completed Orders</p>
           <p className="text-2xl font-semibold text-gray-900">{completedOrders}</p>
@@ -92,13 +106,16 @@ const OrderStat = () => {
           <CheckCircleIcon className="h-6 w-6" />
         </div>
       </div>
-      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between">
+      <div
+        className="bg-white border border-gray-200 rounded-lg p-4 shadow flex items-center justify-between cursor-pointer"
+        onClick={() => onStatusClick('cancelled')}
+      >
         <div>
-          <p className="text-red-500">Cancelled Orders</p>  {/* Changed text color for clarity */}
+          <p className="text-red-500">Cancelled Orders</p>
           <p className="text-2xl font-semibold text-gray-900">{cancelledOrders}</p>
         </div>
-        <div className="text-red-600 bg-red-50 rounded-full p-3">  {/* Changed background color for clarity */}
-          <CheckCircleIcon className="h-6 w-6" />
+        <div className="text-red-600 bg-red-50 rounded-full p-3">
+          <XMarkIcon className="h-6 w-6" />
         </div>
       </div>
     </div>

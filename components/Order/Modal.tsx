@@ -59,20 +59,6 @@ const Modal: React.FC<ModalProps> = ({ onClose, item, onSubmit }) => {
         }
     };
 
-    // Status Change Color
-    const getStatusClass = (status: string) => {
-        switch (status) {
-            case 'pending':
-                return 'text-yellow-500';
-            case 'completed':
-                return 'text-green-500';
-            case 'cancelled':
-                return 'text-red-500';
-            default:
-                return '';
-        }
-    };
-
     // Bubble UI 
     if (!item) return null;
     return (

@@ -85,6 +85,15 @@ export default function FetchDataPage() {
     setIsEditModalOpen(true); // Open the edit modal
   };
 
+  const handleStatusClick = (status: string) => {
+    if (status === '') {
+      setFilteredData(data);
+    } else {
+      const filtered = data.filter(item => item.status === status);
+      setFilteredData(filtered);
+    }
+  };
+
   // color change status
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -106,11 +115,11 @@ export default function FetchDataPage() {
         <div className="mb-4 md:mb-4">
           <h1 className="text-2xl font-semibold leading-7 text-gray-900">Order Status</h1>
           <p className="mt-2 text-sm text-gray-600">
-            View order status and details.
+            View order details and edit order status.
           </p>
         </div>
       </div>
-      <OrderStat />
+      <OrderStat onStatusClick={handleStatusClick} />
       <div className="mt-8 flow-root">
         <div className="mt-4 mb-4 flex justify-end">
           <div className="relative rounded-md shadow-sm w-64">
