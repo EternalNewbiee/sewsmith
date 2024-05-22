@@ -4,9 +4,7 @@ import OrderProcess from "@/components/app/OrderProcess";
 import { getUser } from "@/lib/supabase/server";
 import UserHeader from "@/components/UserHeader";
 import Footer from "@/components/Footer"
-import Card from "@/components/app/Card";
-import CustomizeCard from "@/components/app/CustomizeCard";
-import Search from "@/components/app/Search";
+
 
 
 
@@ -29,4 +27,5 @@ export default async function DashboardPage({
       </div>
     <Footer/>
     </div>
+  );
 }

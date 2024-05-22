@@ -10,10 +10,10 @@ export default async function OrdersPage() {
   return (
     <>
       <UserOrderHistory/>
-      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
+      <FetchOrder />
     </>
     
-       <FetchOrder />
+
     
   );
 }
