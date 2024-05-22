@@ -284,7 +284,7 @@ export default function FetchDataPage() {
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.id}</td>
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.color}</td>
                     <td className="w-1/3 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.fabric}</td>
-                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                    <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-500" style={{ color: item.quantity < 200 ? 'red' : 'black' }}>{item.quantity}</td>
                     <td className="w-1/6 text-center px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button onClick={() => setSelectedItem(item)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
                       <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-900">Delete</button>

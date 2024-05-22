@@ -37,7 +37,6 @@ export default function FetchDataPage() {
   const [data, setData] = useState<Order[]>([]);
   const [filteredData, setFilteredData] = useState<Order[]>([]);
   const [selectedItem, setSelectedItem] = useState<Order | null>(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); 
 
