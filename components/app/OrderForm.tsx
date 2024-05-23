@@ -6,12 +6,19 @@ import { FABRICS } from '@/components/app/fabric-option';
 import { COLORS } from '@/components/app/color-option';
 import { getUser } from '@/lib/supabase/client';
 import cn from 'classnames';
+import { z } from 'zod';
 
 interface OrderFormProps {
   productTitle: string;
   productImage: string;
   productPrice: string;
 }
+
+const OrderFormSchema = z.object({
+  fabric: z.string().nonempty('* Fabric is required'),
+  color: z.string().nonempty('* Color is required'),
+  sizes: z.array(z.string()).min(1, '* At least one size must be selected'),
+});
 
 export default function OrderForm({ productTitle, productImage, productPrice }: OrderFormProps) {
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -22,14 +29,42 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
   const sizesRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
-  const [shippingAddress, setShippingAddress] = useState<string>('');
-  const [shippingFee, setShippingFee] = useState<number>(150);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
-  
+
   // Strip currency symbol and convert to number
   const cleanedPrice = productPrice.replace(/[^\d.-]/g, '');
   const price = parseFloat(cleanedPrice);
-  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userData = await getUser();
+      setUser(userData.user);
+    };
+    fetchData();
+  }, []);
+
+  const validateForm = () => {
+    try {
+      OrderFormSchema.parse({
+        fabric: selectedFabric,
+        color: selectedColor,
+        sizes: sizes,
+      });
+      setErrors({});
+      return true;
+    } catch (error) {
+      const newErrors: { [key: string]: string } = {};
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          if (err.path) newErrors[err.path[0]] = err.message;
+        });
+      }
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
   const handleSizeChange = (size: string) => {
     setSelectedSize(size);
     if (!sizes.includes(size)) {
@@ -47,18 +82,13 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     setSelectedColor(color);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const userData = await getUser();
-      setUser(userData.user);
-    };
-    fetchData();
-  }, []);
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Check if productPrice is a valid number
+    if (!validateForm()) {
+      return;
+    }
+
     if (isNaN(price)) {
       console.error('Invalid product price:', productPrice);
       return;
@@ -72,9 +102,9 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
       if (!user) {
         throw new Error('User not authenticated');
       }
-  
+
       const status = 'pending';
-      
+
       for (const size of sizes) {
         const { data, error } = await supabase.from('cart').insert([
           {
@@ -84,31 +114,29 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
             sizes: size,
             quantities: quantities[size] || 0,
             order_date: new Date().toISOString(),
-            shipping_address: shippingAddress,
-            shipping_fee: shippingFee,
             price: price,
             user_id: user.id,
             status: status,
           },
         ]);
-  
+
         if (error) {
           throw error;
         }
-  
+
         console.log(`Order for ${size} inserted successfully:`, data);
       }
-  
+
       // Reset form fields and states
       setSelectedFabric('');
       setSelectedColor('');
       setSizes([]);
       setQuantities({});
-  
+
       if (sizesRef.current) {
         sizesRef.current.scrollIntoView({ behavior: 'smooth' });
       }
-  
+
       router.push('/order/checkout');
     } catch (error) {
       console.error(
@@ -129,8 +157,8 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
         <form className="ml-8" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-3">
             <h1 className="text-3xl font-semibold text-center">Order Details Form</h1>
-            <RadioGroup value={selectedFabric} onChange={(val) => setSelectedFabric(val)}>
-              <label>Fabric: {selectedFabric}</label>
+            <RadioGroup value={selectedFabric} onChange={handleFabricChange}>
+              <label>Fabric: {selectedFabric} {errors.fabric && <span className="text-red-500">{errors.fabric}</span>}</label>
               <div className="flex items-center space-x-3 mt-2">
                 {FABRICS.map((fabric) => (
                   <RadioGroup.Option
@@ -151,8 +179,8 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
               </div>
             </RadioGroup>
 
-            <RadioGroup value={selectedColor} onChange={setSelectedColor} className="mt-4">
-              <label>Color: {selectedColor}</label>
+            <RadioGroup value={selectedColor} onChange={handleColorChange} className="mt-4">
+              <label>Color: {selectedColor} {errors.color && <span className="text-red-500">{errors.color}</span>}</label>
               <div className="flex items-center space-x-3 mt-2">
                 {COLORS.map((color) => (
                   <RadioGroup.Option
@@ -170,7 +198,7 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
                 ))}
               </div>
             </RadioGroup>
-            <p className="col-span-2">Sizes:</p>
+            <p className="col-span-2">Sizes: {errors.sizes && <span className="text-red-500">{errors.sizes}</span>}</p>
             <div className="grid grid-cols-2 gap-2 place-items-center">
               {['Small', 'Medium', 'Large', 'Extra Large'].map((size) => (
                 <div key={size} className="flex items-center justify-start mt-2 p-4 w-[260px] gap-0">
@@ -194,7 +222,6 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
                 </div>
               ))}
             </div>
-
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50"
@@ -207,3 +234,4 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     </div>
   );
 }
+
