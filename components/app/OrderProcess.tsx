@@ -40,6 +40,7 @@ export default function OrderPage({ user }: { user: any }) {
     setSearchVisible(true);
     setCustomizeVisible(true);
     setIsCustom(false); 
+    
   };
 
   let selectedProduct = null;

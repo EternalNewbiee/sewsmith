@@ -20,7 +20,7 @@ export default async function DashboardPage({
     }
 
   return (
-    <div>
+    <div className="min-h-screen bg-cover bg-fixed bg-gradient-to-tr from-blue-100 to-white">
     <UserHeader user={user} />
       <div>
         <OrderProcess user={user}/>

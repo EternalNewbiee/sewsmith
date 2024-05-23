@@ -60,9 +60,7 @@ export default function OrderSummary() {
   const SUPABASE_URL = "https://aasjrchinevrqjlqldvr.supabase.co"; // Replace with your actual Supabase URL
   const SUPABASE_BUCKET = "public";
 
-  const getImageUrl = (path) => {
-    return `${SUPABASE_URL}/storage/v1/object/public/Images/public/${path}`;
-  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,16 +102,23 @@ export default function OrderSummary() {
   }
 
   const calculateSubtotal = () => {
-    return cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantities, 0);
+    const subtotal = cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantities, 0);
+    return `₱ ${subtotal.toLocaleString()}.00`;
   };
   
-  const calculateShipping = () => {
-    return 150;
+  const calculateShipping: () => string = () => {
+    const shipping = 150;
+    return `₱ ${shipping.toLocaleString()}.00`;
   };
   
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateShipping();
+    const subtotal = parseInt(calculateSubtotal().replace('₱', '').replace('.00', '').replace(/,/g, ''));
+    const shipping = parseInt(calculateShipping().replace('₱', '').replace('.00', '').replace(/,/g, ''));
+    const total = subtotal + shipping;
+    return `₱ ${total.toLocaleString()}.00`;
   };
+  
+
 
   const updateInventory = async (fabricType: string, quantity: number) => {
     try {
@@ -170,7 +175,7 @@ export default function OrderSummary() {
         shippingSchema.parse(shippingInfo); // Validate using Zod
   
         for (const item of cart) {
-          const { fabric, shirt_type, sizes, color, quantities, status, shipping_address } = item;
+          const { fabric, shirt_type, sizes, color, quantities, status, shipping_address, is_custom } = item;
   
           await updateInventory(fabric, quantities);  // Update inventory for each item
   
@@ -191,6 +196,7 @@ export default function OrderSummary() {
               total_price: calculateTotal(),
               user_id: user.id,
               status,
+              is_custom, 
             },
           ]);
   
@@ -453,10 +459,10 @@ export default function OrderSummary() {
                                {product.is_custom ? product.shirt_type.split('.')[0] : product.shirt_type}
                               </a>
                           </h4>
-                          <p className="ml-4 text-sm font-medium text-gray-900">{product.price} pcs</p>
+                          <p className="ml-4 text-sm font-medium text-gray-900">{product.price} Pesos</p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">{product.color}</p>
-                        <p className="mt-1 text-sm text-gray-500">{product.sizes}</p>
+                        <p className="mt-1 text-sm text-gray-500">{product.sizes} {product.quantities} pcs</p>
                       </div>
 
                       <div className="flex flex-1 items-end justify-between pt-2">
@@ -483,15 +489,15 @@ export default function OrderSummary() {
               <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Subtotal</dt>
-                  <dd className="text-sm font-medium text-gray-900">${calculateSubtotal()}</dd>
+                  <dd className="text-sm font-medium text-gray-900">{calculateSubtotal()}</dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Shipping</dt>
-                  <dd className="text-sm font-medium text-gray-900">${calculateShipping()}</dd>
+                  <dd className="text-sm font-medium text-gray-900">{calculateShipping()}</dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Total</dt>
-                  <dd className="text-sm font-medium text-gray-900">${calculateTotal()}</dd>
+                  <dd className="text-sm font-medium text-gray-900">{calculateTotal()}</dd>
                 </div>
               </dl>
             </div>

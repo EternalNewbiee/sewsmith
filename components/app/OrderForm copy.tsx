@@ -8,7 +8,6 @@ import { getUser } from '@/lib/supabase/client';
 import cn from 'classnames';
 import { z } from 'zod';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Dialog } from '@headlessui/react';
 
 interface OrderFormProps {
   productTitle: string;
@@ -95,18 +94,11 @@ export default function OrderForm({ productTitle, productImage, productPrice, in
   };
 
   const handleSizeChange = (size: string) => {
-    const index = sizes.indexOf(size);
-    if (index === -1) {
-      // Checkbox is checked, add size to the list
+    setSelectedSize(size);
+    if (!sizes.includes(size)) {
       setSizes([...sizes, size]);
     } else {
-      // Checkbox is unchecked, remove size from the list and clear its quantity
-      const updatedSizes = [...sizes];
-      updatedSizes.splice(index, 1);
-      setSizes(updatedSizes);
-      const updatedQuantities = { ...quantities };
-      delete updatedQuantities[size.toLowerCase()];
-      setQuantities(updatedQuantities);
+      setSizes(sizes.filter(s => s !== size));
     }
   };
 
@@ -252,36 +244,28 @@ export default function OrderForm({ productTitle, productImage, productPrice, in
               </div>
             </RadioGroup>
             <p className="col-span-2">Sizes: {errors.sizes && <span className="text-red-500">{errors.sizes}</span>}</p>
-            <div className="flex gap-2">
-            {['Small', 'Medium', 'Large', 'Extra Large'].map((size) => (
-              <div key={size} className="flex items-center justify-start mt-2 p-4 gap-1">
-                <input
-                  type="checkbox"
-                  id={`size-${size.toLowerCase().replace(/ /g, '-')}`}
-                  name={`size-${size.toLowerCase().replace(/ /g, '-')}`}
-                  value={size.toLowerCase()}
-                  onChange={() => handleSizeChange(size.toLowerCase())}
-                  checked={sizes.includes(size.toLowerCase())}
-                  className="size-6 rounded-full"
-                />
-                <label htmlFor={`size-${size.toLowerCase().replace(/ /g, '-')}`} className="ml-1">{size}:</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={quantities[size.toLowerCase()] || ''}
-                  onChange={(e) => setQuantities({ ...quantities, [size.toLowerCase()]: parseInt(e.target.value) || 0 })}
-                  className={`ml-1 w-24 rounded-xl ${!sizes.includes(size.toLowerCase()) ? 'bg-gray-200' : ''}`}
-                  disabled={!sizes.includes(size.toLowerCase())} // Disable input when checkbox is unchecked
-                  readOnly={!sizes.includes(size.toLowerCase())} // Make input read-only when checkbox is unchecked
-                  onKeyDown={(e) => {
-                    if (e.key === 'e') {
-                      e.preventDefault();
-                    }
-                  }}
-                />
-              </div>
-            ))}
-
+            <div className="grid grid-cols-4 gap-2">
+              {['Small', 'Medium', 'Large', 'Extra Large'].map((size) => (
+                <div key={size} className="flex items-center justify-start mt-2 p-4 gap-2">
+                  <input
+                    type="checkbox"
+                    id={`size-${size.toLowerCase().replace(/ /g, '-')}`}
+                    name={`size-${size.toLowerCase().replace(/ /g, '-')}`}
+                    value={size.toLowerCase()}
+                    onChange={() => handleSizeChange(size.toLowerCase())}
+                    checked={sizes.includes(size.toLowerCase())}
+                    className="w-6 h-6"
+                  />
+                  <label htmlFor={`size-${size.toLowerCase().replace(/ /g, '-')}`} className="ml-2">{size}:</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={quantities[size.toLowerCase()] || ''}
+                    onChange={(e) => setQuantities({ ...quantities, [size.toLowerCase()]: parseInt(e.target.value) || 0 })}
+                    className="ml-2 w-24"
+                  />
+                </div>
+              ))}
             </div>
             <button
               type="submit"

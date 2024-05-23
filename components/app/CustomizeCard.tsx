@@ -22,7 +22,7 @@ export default function CustomizeCard({ handleUploadComplete }: { handleUploadCo
           .from('Images')  // Name sa bucket didtu sa supabase
           .upload(`${file.name}`, file, {
             cacheControl: '3600',
-            upsert: false,
+             upsert: false, 
           });
 
         if (error) {
