@@ -19,7 +19,7 @@ export default function CustomizeCard({ handleUploadComplete }: { handleUploadCo
         }
 
         const { data, error } = await supabase.storage
-          .from('Images')  // Name of your bucket
+          .from('Images')  // Name sa bucket didtu sa supabase
           .upload(`public/${file.name}`, file, {
             cacheControl: '3600',
             upsert: false,
@@ -29,7 +29,7 @@ export default function CustomizeCard({ handleUploadComplete }: { handleUploadCo
           setError(error.message);
         } else {
           console.log('File uploaded successfully:', data);
-          handleUploadComplete(file); // Pass uploaded file to callback function
+          handleUploadComplete(file); // e Pass ang uploaded file sa callback function
         }
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Unexpected error occurred');

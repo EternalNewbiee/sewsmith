@@ -29,17 +29,20 @@ export default function OrderPage({ user }: { user: any }) {
   const filteredCards = cardList.filter(card =>
     card.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
 
   let selectedProduct = null;
   if (uploadedFile) {
+    const fileNameWithoutExtension = uploadedFile.name.replace(/\.[^/.]+$/, ''); // pang remove sa file extention
     selectedProduct = {
-      title: 'Customized Pattern',
+      title: fileNameWithoutExtension,
       price: '₱500',
       img: URL.createObjectURL(uploadedFile)
     };
   } else if (selectedCard) {
     selectedProduct = selectedCard;
   }
+  
 
   return (
     <main className="container mx-auto py-36 px-8">

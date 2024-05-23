@@ -202,7 +202,7 @@ export default function OrderSummary() {
   const CancelOrder = async () => {
     await deleteCart();
     alert("Order Canceled");
-    router.push('/order'); // Redirect to the order page after cancelling
+    router.push('/order');
   };
 
 
@@ -328,11 +328,11 @@ export default function OrderSummary() {
                         value={region}
                         onChange={(e) => setRegion(e.target.value)}
                         className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
-                          formSubmitted && !region && 'border-red-500' /* Add red border if field is empty and form has been submitted */
+                          formSubmitted && !region && 'border-red-500'
                         }`}
                       />
                       {formSubmitted && !region && (
-                        <p className="mt-1 text-xs text-red-500">*required</p> /* Display *required label if field is empty and form has been submitted */
+                        <p className="mt-1 text-xs text-red-500">*required</p>
                       )}
                     </div>
                   </div>
