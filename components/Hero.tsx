@@ -28,7 +28,7 @@ export default function Example() {
 
   
       <div className="absolute w-full top-15 right-0 bottom-0 flex justify-center items-center z-10">
-        <img src="/img/Woman.png" alt="Woman" className="h-auto max-w-sm" />
+        <img src="https://aasjrchinevrqjlqldvr.supabase.co/storage/v1/object/public/dev/woman.png" alt="Woman" className="h-auto max-w-sm" />
       </div>
 
        <div className="absolute inset-12 md:flex md:justify-end">
