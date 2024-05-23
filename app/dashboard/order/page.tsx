@@ -8,7 +8,7 @@ export default async function OrdersPage() {
   const { user } = await getUser();
   const statistics = await fetchStatistics();
   
-  console.log("STATL", statistics)
+
 
   return (
     <>

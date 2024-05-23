@@ -8,11 +8,8 @@ import Footer from "@/components/Footer"
 
 
 
-export default async function DashboardPage({
-    children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>) {
+export default async function Order() {
+  
     const { user } = await getUser();
   
     if (!user) {

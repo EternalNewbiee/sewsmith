@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { getUser, getCart, cancelCart, getUserInfo, deleteCart, createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { z } from 'zod'
 import Swal from 'sweetalert2'
 import UserHeader from "@/components/UserHeader";
@@ -54,8 +54,6 @@ export default function OrderSummary() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const supabase = createClient();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialState = searchParams.get('state');
 
   const SUPABASE_URL = "https://aasjrchinevrqjlqldvr.supabase.co"; // Replace with your actual Supabase URL
   const SUPABASE_BUCKET = "public";
@@ -84,10 +82,6 @@ export default function OrderSummary() {
     fetchData()
   }, [])
 
-  const handleBackToOrderForm = () => {
-    const stateString = JSON.stringify(initialState);
-    router.push(`/order?state=${encodeURIComponent(stateString)}`);
-  };
 
   const handleCancelOrder = async (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {

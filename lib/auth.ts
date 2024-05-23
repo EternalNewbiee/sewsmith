@@ -151,20 +151,28 @@ const resetPasswordSchema = z.object({
 });
 
 
-// In your lib/auth.ts or similar file
-export async function resetPassword(password: string, token: string, email: string): Promise<void> {
-  // Your API call to backend to reset the password
-  // This is a placeholder, replace with actual API call logic
-  console.log('Resetting password', { password, token, email });
-  // Example of handling response or error
-  return new Promise((resolve, reject) => {
-      // Mock of an asynchronous operation
-      setTimeout(() => {
-          if (password && token && email) {
-              resolve();
-          } else {
-              reject('Invalid data');
-          }
-      }, 1000);
+
+
+export async function resetPassword(formData: FormData) {
+  const result = resetPasswordSchema.safeParse({
+    password: formData.get("password"),
   });
+
+  if (!result.success) {
+    const errors = result.error.issues.map((issue) => issue.message).join(", ");
+    return redirect(`/reset-password?error=${errors}`);
+  }
+
+  const { password } = result.data;
+
+  const supabase = createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    return redirect(
+      `/reset-password?error=${error.message || "Could not reset password."}`
+    );
+  }
+
+  return redirect("/dashboard?success=Password reset successfully.");
 }
