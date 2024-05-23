@@ -44,6 +44,10 @@ export async function getUser() {
   return data;
 }
 
+
+
+
+
 export async function getAllUsers() {
   const supabase = createClient();
   const {
@@ -73,19 +77,27 @@ export async function sendPasswordRecovery(email: string) {
   return;
 }
 
-export async function getUserInfo( id: any){
-  const supabase = createClient()
-  
-  
-  let { data, error } = await supabase.from('UserInfo').select('*').eq('userid', id )
+interface UserInfo {
+  id: number;
+  last_name: string;
+  first_name: string | null;
+  userid: string | null; // Assuming uuid is a string
+  role: string | null;
+}
 
+export async function getUserInfo(id: string): Promise<UserInfo[] | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('userinfo')
+    .select('*')
+    .eq('userid', id);
 
+  if (error) {
+    console.error("Error fetching user info:", error.message);
+    return null;
+  }
 
-    if (!error) {
-      console.log(data);
-      return data;
-    }
-    return;
+  return data as UserInfo[]; // Type assertion assuming the data structure matches UserInfo[]
 }
 
 
@@ -135,4 +147,18 @@ export async function getAllItems(){
   .select('*')
 
   return data;
+}
+
+export async function fetchStatistics() {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase.from("statistics").select("*");
+    if (error) {
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error("Error fetching statistics:", (error as Error).message);
+    return null;
+  }
 }

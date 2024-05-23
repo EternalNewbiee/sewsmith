@@ -13,19 +13,22 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const { user } = await getUser();
-  const  details = await getUserInfo(user?.id);
 
   if (!user) {
     return redirect("/signin");
   }
 
-  console.log(details)
-  console.log(details?.[0]?.role)
+  if (user?.id) {
+    const userInfoArray = await getUserInfo(user?.id);
 
+  if (userInfoArray && userInfoArray.length > 0) {
+    const userInfo = userInfoArray[0]; 
+    if (userInfo.role!="admin") {
+      return redirect("/homepage");
+    }
+  }
+}
 
-  // if(details?.[0]?.role != "admin") {
-  //   return redirect ("/homepage")
-  // }
 
   
   return (
