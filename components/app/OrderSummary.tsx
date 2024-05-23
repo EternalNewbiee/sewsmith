@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { getUser, getCart, cancelCart, getUserInfo, deleteCart, createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { z } from 'zod'
 import Swal from 'sweetalert2'
 import UserHeader from "@/components/UserHeader";
@@ -32,6 +32,7 @@ interface Cart {
   phone_number: string
   price: string
   custom_design: string;
+  is_custom: boolean;
 }
 
 interface UserInfo {
@@ -53,6 +54,15 @@ export default function OrderSummary() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const supabase = createClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialState = searchParams.get('state');
+
+  const SUPABASE_URL = "https://aasjrchinevrqjlqldvr.supabase.co"; // Replace with your actual Supabase URL
+  const SUPABASE_BUCKET = "public";
+
+  const getImageUrl = (path) => {
+    return `${SUPABASE_URL}/storage/v1/object/public/Images/public/${path}`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,6 +85,11 @@ export default function OrderSummary() {
     }
     fetchData()
   }, [])
+
+  const handleBackToOrderForm = () => {
+    const stateString = JSON.stringify(initialState);
+    router.push(`/order?state=${encodeURIComponent(stateString)}`);
+  };
 
   const handleCancelOrder = async (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
@@ -115,7 +130,7 @@ export default function OrderSummary() {
       const item = inventoryData[0];
       const newQuantity = item.quantity - quantity;
       if (newQuantity < 0) {
-        throw new Error(`Not enough ${fabricType} fabric in inventory`);
+        throw new Error(`Not enough ${item.color} ${fabricType} fabric in inventory`);
       }
 
       const { error: updateError } = await supabase
@@ -124,9 +139,17 @@ export default function OrderSummary() {
         .eq('id', item.id);
       if (updateError) throw updateError;
 
-      console.log('Inventory updated successfully');
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Inventory updated successfully',
+      });
     } catch (error) {
-      console.error('Error updating inventory:', error instanceof Error ? error.message : 'Unknown error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: error instanceof Error ? error.message : 'Unknown error',
+      });
       throw error;
     }
   };
@@ -205,6 +228,7 @@ export default function OrderSummary() {
     router.push('/order');
   };
 
+  console.log(cart)
 
   return (
     <div className="bg-gray-50">
@@ -413,30 +437,33 @@ export default function OrderSummary() {
                 {cart.map((product) => (
                   <li key={product.id} className="flex px-4 py-6 sm:px-6">
                     <div className="flex-shrink-0">
-                      <img
-                        src={`/img/${product.shirt_type}.jpg`} alt={product.shirt_type} className="h-20 w-20 rounded-md" 
-                      />
+                    <img
+                      src={product.is_custom ? `${SUPABASE_URL}/storage/v1/object/public/Images/${product.shirt_type}` 
+                      : `/img/${product.shirt_type}.jpg`}
+                      alt={product.shirt_type}
+                      className="h-20 w-20 rounded-md"
+                    />
                     </div>
 
                     <div className="ml-6 flex flex-1 flex-col">
                       <div>
                         <div className="flex justify-between">
                           <h4 className="text-sm">
-                            <a href={product.shirt_type} className="font-medium text-gray-700 hover:text-gray-800">
-                              {product.shirt_type}
-                            </a>
+                          <a href={product.is_custom ? `${SUPABASE_URL}/storage/v1/object/public/Images/${product.shirt_type}` : `${product.shirt_type}.jpg`} className="font-medium text-gray-700 hover:text-gray-800">
+                               {product.is_custom ? product.shirt_type.split('.')[0] : product.shirt_type}
+                              </a>
                           </h4>
-                          <p className="ml-4 text-sm font-medium text-gray-900">{product.price}</p>
+                          <p className="ml-4 text-sm font-medium text-gray-900">{product.price} pcs</p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">{product.color}</p>
                         <p className="mt-1 text-sm text-gray-500">{product.sizes}</p>
                       </div>
 
                       <div className="flex flex-1 items-end justify-between pt-2">
-                        <p className="flex items-center space-x-2 text-sm text-gray-700">
+                        {/* <p className="flex items-center space-x-2 text-sm text-gray-700">
                           <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
                           <span>{product.inStock ? 'In stock' : 'Out of stock'}</span>
-                        </p>
+                        </p> */}
                         <div className="flex">
                           <button
                             type="button"
@@ -448,6 +475,7 @@ export default function OrderSummary() {
                           </button>
                         </div>
                       </div>
+                      
                     </div>
                   </li>
                 ))}
@@ -476,6 +504,7 @@ export default function OrderSummary() {
               >
                 Cancel
               </button>
+
               <button
                 type="button"
                 onClick={handleConfirmOrder}

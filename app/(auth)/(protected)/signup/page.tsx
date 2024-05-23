@@ -43,7 +43,7 @@ export default function SignUp({ searchParams }: { searchParams: SearchParams })
             <input type="password" name="password" placeholder="Password" className="w-full p-2 border rounded-md" required />
             <div className="flex items-center">
               <input id="terms" type="checkbox" className="w-4 h-4" required />
-              <label htmlFor="terms" className="ml-2 text-sm">I accept SewSmith's Terms & Conditions</label>
+              <label htmlFor="terms" className="ml-2 text-sm">I accept SewSmith&apos;s Terms & Conditions</label>
             </div>
             <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded-md">SIGN UP</button>
           </form>

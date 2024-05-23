@@ -7,11 +7,15 @@ import { COLORS } from '@/components/app/color-option';
 import { getUser } from '@/lib/supabase/client';
 import cn from 'classnames';
 import { z } from 'zod';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 interface OrderFormProps {
   productTitle: string;
   productImage: string;
   productPrice: string;
+  initialState?: any; // Initial state for the form
+  onBack: (formState: any) => void; // Callback to handle back navigation
+  isCustom: boolean;
 }
 
 const OrderFormSchema = z.object({
@@ -20,19 +24,18 @@ const OrderFormSchema = z.object({
   sizes: z.array(z.string()).min(1, '* At least one size must be selected'),
 });
 
-export default function OrderForm({ productTitle, productImage, productPrice }: OrderFormProps) {
-  const [selectedSize, setSelectedSize] = useState<string>('');
-  const [selectedFabric, setSelectedFabric] = useState<string>('');
-  const [selectedColor, setSelectedColor] = useState<string>('');
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [quantities, setQuantities] = useState<{ [size: string]: number }>({});
+export default function OrderForm({ productTitle, productImage, productPrice, initialState, onBack, isCustom }: OrderFormProps) {
+  const [selectedSize, setSelectedSize] = useState<string>(initialState?.selectedSize || '');
+  const [selectedFabric, setSelectedFabric] = useState<string>(initialState?.selectedFabric || '');
+  const [selectedColor, setSelectedColor] = useState<string>(initialState?.selectedColor || '');
+  const [sizes, setSizes] = useState<string[]>(initialState?.sizes || []);
+  const [quantities, setQuantities] = useState<{ [size: string]: number }>(initialState?.quantities || {});
   const sizesRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
 
-  // Strip currency symbol and convert to number
   const cleanedPrice = productPrice.replace(/[^\d.-]/g, '');
   const price = parseFloat(cleanedPrice);
 
@@ -43,6 +46,31 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // Load form state from local storage
+    const savedState = localStorage.getItem('orderFormState');
+    if (savedState) {
+      const parsedState = JSON.parse(savedState);
+      setSelectedSize(parsedState.selectedSize || '');
+      setSelectedFabric(parsedState.selectedFabric || '');
+      setSelectedColor(parsedState.selectedColor || '');
+      setSizes(parsedState.sizes || []);
+      setQuantities(parsedState.quantities || {});
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save form state to local storage whenever it changes
+    const formState = {
+      selectedSize,
+      selectedFabric,
+      selectedColor,
+      sizes,
+      quantities,
+    };
+    localStorage.setItem('orderFormState', JSON.stringify(formState));
+  }, [selectedSize, selectedFabric, selectedColor, sizes, quantities]);
 
   const validateForm = () => {
     try {
@@ -102,7 +130,7 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
       if (!user) {
         throw new Error('User not authenticated');
       }
-
+      const isCustomValue = isCustom ? "true" : "false";
       const status = 'pending';
 
       for (const size of sizes) {
@@ -117,6 +145,7 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
             price: price,
             user_id: user.id,
             status: status,
+            is_custom: isCustomValue,
           },
         ]);
 
@@ -132,6 +161,7 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
       setSelectedColor('');
       setSizes([]);
       setQuantities({});
+      localStorage.removeItem('orderFormState'); // Clear local storage
 
       if (sizesRef.current) {
         sizesRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -149,7 +179,22 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
   return (
     <div className="flex justify-evenly">
       <div className="w-1/4 p-2">
+        
         <img src={productImage} alt={productTitle} className="w-full rounded-xl" />
+
+        <button
+              type="button"
+              className="w-full bg-gray-500 text-white py-2 px-4 rounded-md mt-4 hover:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-500 focus:ring-opacity-50"
+              onClick={() => onBack({
+                selectedSize,
+                selectedFabric,
+                selectedColor,
+                sizes,
+                quantities,
+              })}
+            >
+              Change Product
+            </button>
         <h2 className="text-3xl font-medium mt-4 text-center">{productTitle}</h2>
         <p className="text-xl text-indigo-600 text-center">{productPrice}</p>
       </div>
@@ -234,4 +279,3 @@ export default function OrderForm({ productTitle, productImage, productPrice }: 
     </div>
   );
 }
-

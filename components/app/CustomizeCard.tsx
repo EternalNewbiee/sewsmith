@@ -20,7 +20,7 @@ export default function CustomizeCard({ handleUploadComplete }: { handleUploadCo
 
         const { data, error } = await supabase.storage
           .from('Images')  // Name sa bucket didtu sa supabase
-          .upload(`public/${file.name}`, file, {
+          .upload(`${file.name}`, file, {
             cacheControl: '3600',
             upsert: false,
           });
