@@ -15,7 +15,7 @@ export default function SignIn({ searchParams }: { searchParams: SearchParams })
         </div>
         <div className="text-left max-w-md z-10">
           <h2 className="text-lg font-semibold">Don`&apos;`t have an account yet?</h2>
-          <p className="text-sm mb-4 my-2">Reconnect with your SewSmith community! Your designs and collaborations are just a login away.</p>
+          <p className="text-sm mb-4 my-2">Reconnect with your SewSmith community! Your designs and collaborations are just one login away.</p>
           <a href="/signup" className="inline-block bg-white text-blue-600 py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-50 transition duration-150 ease-in-out">
             Sign Up
           </a>
