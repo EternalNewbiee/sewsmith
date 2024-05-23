@@ -1,10 +1,12 @@
+
 import { redirect } from "next/navigation";
 
-import { getUser } from "@/lib/supabase/server";
+import { getUser, getUserInfo } from "@/lib/supabase/server";
 import { UserProvider } from "@/context/UserContext";
 import UserHeader from "@/components/UserHeader";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
+
 
 export default async function Homepage({
   children,
@@ -16,9 +18,18 @@ export default async function Homepage({
   if (!user) {
     return redirect("/signin");
   }
-  // if (user?.role != "user") {
-  //   return redirect("homepage");
-  // }
+
+  if (user?.id) {
+    const userInfoArray = await getUserInfo(user?.id);
+
+  if (userInfoArray && userInfoArray.length > 0) {
+    const userInfo = userInfoArray[0]; 
+    if (userInfo.role!="user") {
+      return redirect("/dashboard");
+    }
+  }
+}
+
   return (
     <UserProvider>
       <div className="bg-white">

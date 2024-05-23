@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
-import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import React, { Fragment, useState, useEffect } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
@@ -15,32 +14,40 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+
+function classNames(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(" ");
+}
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
-  { name: "Users", href: "/dashboard/users", icon: UsersIcon, current: false },
-  { name: "Orders", href: "/dashboard/orders", icon: FolderIcon, current: false },
-  { name: "Task", href: "#", icon: CalendarIcon, current: false },
-  { name: "Inventory", href: "/dashboard/inventory", icon: DocumentDuplicateIcon, current: false },
-  { name: "Finance", href: "#", icon: ChartPieIcon, current: false },
-  { name: "Employee", href: "/dashboard/users", icon: UsersIcon, current: false },
+  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+  { name: "Users", href: "/dashboard/users", icon: UsersIcon },
+  { name: "Inventory", href: "/dashboard/inventory", icon: DocumentDuplicateIcon },
+  { name: "Finance", href: "/dashboard/finance", icon: ChartPieIcon },
 ];
+
 const teams = [
   { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
   { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
   { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
 ];
+
 const userNavigation = [
   { name: "Your profile", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 const SideNavMenu = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const [currentItem, setCurrentItem] = useState(pathname);
+
+  useEffect(() => {
+    setCurrentItem(pathname);
+  }, [pathname]);
+
   return (
     <div>
       <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -88,7 +95,6 @@ const SideNavMenu = () => {
                     </button>
                   </div>
                 </Transition.Child>
-                {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <img
@@ -103,10 +109,10 @@ const SideNavMenu = () => {
                         <ul role="list" className="-mx-2 space-y-1">
                           {navigation.map((item) => (
                             <li key={item.name}>
-                              <a
+                              <Link
                                 href={item.href}
                                 className={classNames(
-                                  item.current
+                                  currentItem === item.href
                                     ? "bg-gray-50 text-indigo-600"
                                     : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                                   "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
@@ -114,7 +120,7 @@ const SideNavMenu = () => {
                               >
                                 <item.icon
                                   className={classNames(
-                                    item.current
+                                    currentItem === item.href
                                       ? "text-indigo-600"
                                       : "text-gray-400 group-hover:text-indigo-600",
                                     "h-6 w-6 shrink-0"
@@ -122,7 +128,7 @@ const SideNavMenu = () => {
                                   aria-hidden="true"
                                 />
                                 {item.name}
-                              </a>
+                              </Link>
                             </li>
                           ))}
                         </ul>
@@ -180,9 +186,7 @@ const SideNavMenu = () => {
         </Dialog>
       </Transition.Root>
 
-      {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
             <img
@@ -197,10 +201,10 @@ const SideNavMenu = () => {
                 <ul role="list" className="-mx-2 space-y-1">
                   {navigation.map((item) => (
                     <li key={item.name}>
-                      <a
+                      <Link
                         href={item.href}
                         className={classNames(
-                          item.current
+                          currentItem === item.href
                             ? "bg-gray-50 text-indigo-600"
                             : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                           "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
@@ -208,7 +212,7 @@ const SideNavMenu = () => {
                       >
                         <item.icon
                           className={classNames(
-                            item.current
+                            currentItem === item.href
                               ? "text-indigo-600"
                               : "text-gray-400 group-hover:text-indigo-600",
                             "h-6 w-6 shrink-0"
@@ -216,7 +220,7 @@ const SideNavMenu = () => {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

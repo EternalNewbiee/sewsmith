@@ -53,7 +53,7 @@ export async function signInWithPassword(formData: FormData) {
     return redirect(`/signin?${errorParams}`);
   }
 
-  return redirect("/dashboard");
+  return redirect("/homepage ");
 }
 
 export async function signUp(formData: FormData) {
@@ -90,7 +90,7 @@ export async function signUp(formData: FormData) {
     return redirect(`/signup?${errorParams}`);
   }
 
-  return redirect("/signup?success=Check your email to continue signing up.");
+  return redirect("/homepage?success=Check your email to continue signing up.");
 }
 
 type Provider = "github" | "google";
