@@ -31,7 +31,7 @@ export default async function DashboardLayout({
   
   return (
     <UserProvider>
-      <div>
+      <div className="min-h-screen bg-cover bg-fixed bg-gradient-to-tr from-grey-100 to-blue-50">
         <SideNavMenu />
 
         <div className="lg:pl-72">
