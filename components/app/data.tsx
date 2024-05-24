@@ -33,7 +33,7 @@ const cardList: CardItem[] = [
     {
         id: 5,
         img: "/img/Crop Top.jpg",
-        title: "Corp Top",
+        title: "Crop Top",
         price: "80",
     },
     {
