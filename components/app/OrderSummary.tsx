@@ -197,11 +197,7 @@ export default function OrderSummary() {
         }
   
         await deleteCart(); // Use deleteCart function to delete all items from the cart
-        Swal.fire({
-          icon: 'success',
-          title: 'Order placed',
-          text: 'Your order has been successfully placed!',
-        }).then(() => {
+        Swal.fire('Order Placed','Your order has been placed successfully.', 'success').then(() => {
           router.push('/order_history');
         });
         
