@@ -127,7 +127,7 @@ export default function OrderHistoryPage() {
                       <div className="sm:flex lg:col-span-7">
                         <div className="aspect-h-1 aspect-w-1 w-full flex-shrink-0 overflow-hidden rounded-lg sm:aspect-none sm:h-40 sm:w-40">
                         <img
-                            src={order.is_custom ? `${SUPABASE_URL}/storage/v1/object/public/Images/${order.shirt_type}` : `/img/${order.shirt_type.toLowerCase()}.jpg`}
+                            src={order.is_custom ? `${SUPABASE_URL}/storage/v1/object/public/Images/${order.shirt_type}` : `/img/${order.shirt_type}.jpg`}
                             alt=""
                             className="h-full w-full object-cover object-center sm:h-full sm:w-full"
                           />
