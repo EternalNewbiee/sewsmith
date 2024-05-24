@@ -278,6 +278,7 @@ export default function OrderForm({ productTitle, productImage, productPrice, in
                       e.preventDefault();
                     }
                   }}
+                  required
                 />
               </div>
             ))}
