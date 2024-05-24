@@ -76,18 +76,31 @@ export default function OrderHistoryPage() {
       confirmButtonText: 'Yes, cancel it!'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { error } = await supabase.from('orders').delete().eq('id', id);
+        const { data: updatedOrder, error } = await supabase
+          .from('orders')
+          .update({ status: 'cancelled' })
+          .eq('id', id);
+  
         if (error) {
           console.error('Error canceling order:', error.message);
           Swal.fire('Error!', 'An error occurred while canceling the order', 'error');
           return;
         }
-        setOrders(orders.filter(order => order.id !== id));
-        Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success');
+  
+        if (updatedOrder) {
+          const updatedOrders = orders.map(order => {
+            if (order.id === id) {
+              return { ...order, status: 'cancelled' };
+            }
+            return order;
+          });
+          setOrders(updatedOrders);
+          Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success');
+        }
       }
     });
   };
-
+  
   if (!user) {
     return <div>Please log in to view your order history.</div>;
   }
