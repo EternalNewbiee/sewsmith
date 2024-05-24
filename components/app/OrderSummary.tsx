@@ -15,8 +15,8 @@ const shippingSchema = z.object({
   shipping_address: z.string().nonempty("Shipping address is required"),
   city: z.string().nonempty("City is required"),
   region: z.string().nonempty("Region is required"),
-  postal_code: z.number().min(4, "Postal code is required"),
-  phone_number: z.number().min(11, "Phone Number is required"),
+  postal_code: z.string().nonempty("Postal Code is required"),
+  phone_number: z.string().nonempty("Phone Number is required"),
 })
 
 interface Cart {
@@ -372,9 +372,12 @@ export default function OrderSummary() {
                           formSubmitted && !postal_code && 'border-red-500' 
                         }`}
                       />
-                      {formSubmitted && !postal_code && (
-                        <p className="mt-1 text-xs text-red-500">*required</p> 
-                      )}
+                        {formSubmitted && !postal_code && (
+                          <p className="mt-1 text-xs text-red-500">*required</p>
+                        )}
+                        {formSubmitted && postal_code && postal_code.length < 4 && (
+                          <p className="mt-1 text-xs text-red-500">Postal code must be at least 4 digits</p>
+                        )}
                     </div>
                   </div>
 
@@ -393,8 +396,11 @@ export default function OrderSummary() {
                           formSubmitted && !phone_number && 'border-red-500' 
                         }`}
                       />
-                      {formSubmitted && !phone_number && (
-                        <p className="mt-1 text-xs text-red-500">*required</p> 
+                       {formSubmitted && !phone_number && (
+                        <p className="mt-1 text-xs text-red-500">*required</p>
+                      )}
+                      {formSubmitted && phone_number && phone_number.length < 11 && (
+                        <p className="mt-1 text-xs text-red-500">Phone number must be at least 11 digits</p>
                       )}
                     </div>
                   </div>

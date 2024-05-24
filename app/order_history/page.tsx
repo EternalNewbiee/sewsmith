@@ -147,7 +147,7 @@ export default function OrderHistoryPage() {
                           <div>
                             <dt className="font-medium text-gray-900">Delivery address</dt>
                             <dd className="mt-3 text-gray-500">
-                              {order.shipping_address}, {order.city}, {order.postal_code}, {order.postal_code} 
+                              {order.shipping_address}, {order.city}, {order.postal_code}, {order.region} 
                             </dd>
                           </div>
                           <div>
