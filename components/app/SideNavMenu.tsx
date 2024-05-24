@@ -99,8 +99,8 @@ const SideNavMenu = () => {
                   <div className="flex h-16 shrink-0 items-center">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                      alt="Your Company"
+                      src="/img/logo.png"
+                      alt=""
                     />
                   </div>
                   <nav className="flex flex-1 flex-col">
@@ -191,8 +191,8 @@ const SideNavMenu = () => {
           <div className="flex h-16 shrink-0 items-center">
             <img
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt="Your Company"
+              src="/img/logo.png"
+              alt=""
             />
           </div>
           <nav className="flex flex-1 flex-col">

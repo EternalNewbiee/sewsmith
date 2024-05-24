@@ -5,6 +5,7 @@ import { getUser } from "@/lib/supabase/client";
 import { createClient } from '@/lib/supabase/client';
 import Footer from "@/components/Footer"
 import Swal from 'sweetalert2';
+import { redirect } from "next/navigation";
 
 interface Order {
   id: number;
@@ -102,7 +103,8 @@ export default function OrderHistoryPage() {
   };
   
   if (!user) {
-    return <div>Please log in to view your order history.</div>;
+    return <div className="min-h-screen p-10 bg-cover bg-fixed bg-gradient-to-tr from-grey-100 to-blue-50">
+      Fetching User...</div>;
   }
 
   const SUPABASE_URL = "https://aasjrchinevrqjlqldvr.supabase.co"; 
