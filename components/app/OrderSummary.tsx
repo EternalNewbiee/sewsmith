@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { getUser, getCart, cancelCart, getUserInfo, deleteCart, createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { z } from 'zod'
 import Swal from 'sweetalert2'
 import UserHeader from "@/components/UserHeader";
@@ -15,8 +15,8 @@ const shippingSchema = z.object({
   shipping_address: z.string().nonempty("Shipping address is required"),
   city: z.string().nonempty("City is required"),
   region: z.string().nonempty("Region is required"),
-  postal_code: z.string().nonempty("Postal code is required"),
-  phone_number: z.string().nonempty("Phone number is required"),
+  postal_code: z.number().min(4, "Postal code is required"),
+  phone_number: z.number().min(11, "Phone Number is required"),
 })
 
 interface Cart {
@@ -54,6 +54,8 @@ export default function OrderSummary() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const supabase = createClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialState = searchParams.get('state');
 
   const SUPABASE_URL = "https://aasjrchinevrqjlqldvr.supabase.co"; // Replace with your actual Supabase URL
   const SUPABASE_BUCKET = "public";
@@ -82,6 +84,10 @@ export default function OrderSummary() {
     fetchData()
   }, [])
 
+  const handleBackToOrderForm = () => {
+    const stateString = JSON.stringify(initialState);
+    router.push(`/order?state=${encodeURIComponent(stateString)}`);
+  };
 
   const handleCancelOrder = async (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
@@ -96,22 +102,16 @@ export default function OrderSummary() {
   }
 
   const calculateSubtotal = () => {
-    const subtotal = cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantities, 0);
-    return `₱ ${subtotal.toLocaleString()}.00`;
+    return cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantities, 0);
   };
   
-  const calculateShipping: () => string = () => {
-    const shipping = 150;
-    return `₱ ${shipping.toLocaleString()}.00`;
+  const calculateShipping = () => {
+    return 150;
   };
   
   const calculateTotal = () => {
-    const subtotal = parseInt(calculateSubtotal().replace('₱', '').replace('.00', '').replace(/,/g, ''));
-    const shipping = parseInt(calculateShipping().replace('₱', '').replace('.00', '').replace(/,/g, ''));
-    const total = subtotal + shipping;
-    return `₱ ${total.toLocaleString()}.00`;
+    return calculateSubtotal() + calculateShipping();
   };
-  
 
 
   const updateInventory = async (fabricType: string, quantity: number) => {
@@ -138,11 +138,6 @@ export default function OrderSummary() {
         .eq('id', item.id);
       if (updateError) throw updateError;
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Inventory updated successfully',
-      });
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -181,7 +176,7 @@ export default function OrderSummary() {
               color,
               quantities,
               order_date: new Date().toISOString(),
-              shipping_address,
+              shipping_address: shippingInfo.shipping_address,
               city,
               postal_code,
               region,
@@ -367,7 +362,7 @@ export default function OrderSummary() {
                     </label>
                     <div className="mt-1">
                       <input
-                        type="text"
+                        type="number"
                         id="postal-code"
                         name="postal-code"
                         autoComplete='postal-code'
@@ -389,7 +384,7 @@ export default function OrderSummary() {
                     </label>
                     <div className="mt-1">
                       <input
-                        type="text"
+                        type="number"
                         id="phone-number"
                         name="phone-number"
                         value={phone_number}

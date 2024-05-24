@@ -16,6 +16,9 @@ interface Order {
   quantities: { [size: string]: number };
   order_date: string;
   shipping_address: string;
+  city: string;
+  postal_code: string;
+  region: string;
   shipping_fee: number;
   status: string;
   total_price: number;
@@ -91,6 +94,13 @@ export default function OrderHistoryPage() {
 
   const SUPABASE_URL = "https://aasjrchinevrqjlqldvr.supabase.co"; 
 
+  console.log(orders)
+
+  const formatOrderDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col ">
       <UserHeader user={user}/>
@@ -137,7 +147,7 @@ export default function OrderHistoryPage() {
                           <div>
                             <dt className="font-medium text-gray-900">Delivery address</dt>
                             <dd className="mt-3 text-gray-500">
-                              {order.shipping_address}
+                              {order.shipping_address}, {order.city}, {order.postal_code}, {order.postal_code} 
                             </dd>
                           </div>
                           <div>
@@ -154,7 +164,7 @@ export default function OrderHistoryPage() {
                       <div className="mr-4 w-[85%]">
                         <h4 className='mb-2'>Status: {order.status} </h4>
                         <p className="text-sm font-medium text-gray-900">
-                          on <time dateTime={order.order_date}>{order.order_date}</time>
+                        Received: <time dateTime={order.order_date}>{formatOrderDate(order.order_date)}</time>
                         </p>
                       </div>
                       <button onClick={() => cancelOrder(order.id)} className="text-red-500 font-semibold justify-end">Cancel Order</button>
